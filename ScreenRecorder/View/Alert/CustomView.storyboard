@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="Gilroy-Medium.ttf">
+            <string>Gilroy-Medium</string>
+        </array>
+        <array key="Gilroy-SemiBold.ttf">
+            <string>Gilroy-SemiBold</string>
+        </array>
+        <array key="SF Compact Text Medium.ttf">
+            <string>SFCompactText-Medium</string>
+        </array>
+    </customFonts>
+    <scenes>
+        <!--Custom Alert View Controller-->
+        <scene sceneID="s0d-6b-0kx">
+            <objects>
+                <viewController storyboardIdentifier="CustomAlertViewController" id="Y6W-OH-hqX" customClass="CustomAlertViewController" customModule="ScreenRecorder" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Trs-It-C1o">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RVm-2T-jYb">
+                                <rect key="frame" x="21.666666666666657" y="301" width="350" height="250"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="NO ACTIVE SUBSCRIPTION" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1lm-dE-mtJ" customClass="CustomLabel" customModule="AppnotrixScreenRecorder" customModuleProvider="target">
+                                        <rect key="frame" x="65.999999999999986" y="35" width="217.66666666666663" height="20"/>
+                                        <fontDescription key="fontDescription" name="SFCompactText-Medium" family="SF Compact Text" pointSize="17"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="characterSpacing">
+                                                <real key="value" value="1.8400000000000001"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vF9-pu-iOa">
+                                        <rect key="frame" x="37" y="173" width="276" height="52"/>
+                                        <color key="backgroundColor" name="yellowThemecolor"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="52" id="DfH-j5-hHR"/>
+                                            <constraint firstAttribute="width" constant="276" id="hmI-OD-eU4"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="Gilroy-SemiBold" family="Gilroy" pointSize="16"/>
+                                        <state key="normal" title="OK">
+                                            <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="30"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="okButtonAction:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="Adr-xr-fBa"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Your purchase were restored successfully, no active subscription found." textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LWO-qV-vy9" customClass="CustomLabel" customModule="AppnotrixScreenRecorder" customModuleProvider="target">
+                                        <rect key="frame" x="20" y="85" width="310" height="35"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <fontDescription key="fontDescription" name="Gilroy-Medium" family="Gilroy" pointSize="15"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="characterSpacing">
+                                                <real key="value" value="0.0"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemIndigoColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="LWO-qV-vy9" secondAttribute="trailing" constant="20" id="4nh-if-QZP"/>
+                                    <constraint firstItem="1lm-dE-mtJ" firstAttribute="top" secondItem="RVm-2T-jYb" secondAttribute="top" constant="35" id="5Ry-dP-lnI"/>
+                                    <constraint firstItem="LWO-qV-vy9" firstAttribute="leading" secondItem="RVm-2T-jYb" secondAttribute="leading" constant="20" id="8Rc-cR-9oq"/>
+                                    <constraint firstAttribute="width" constant="350" id="KbO-YV-7yx"/>
+                                    <constraint firstItem="vF9-pu-iOa" firstAttribute="centerX" secondItem="RVm-2T-jYb" secondAttribute="centerX" id="Loz-Hp-Aib"/>
+                                    <constraint firstItem="1lm-dE-mtJ" firstAttribute="centerX" secondItem="RVm-2T-jYb" secondAttribute="centerX" id="dld-wa-V3p"/>
+                                    <constraint firstAttribute="bottom" secondItem="vF9-pu-iOa" secondAttribute="bottom" constant="25" id="glM-uD-VrG"/>
+                                    <constraint firstItem="LWO-qV-vy9" firstAttribute="centerX" secondItem="RVm-2T-jYb" secondAttribute="centerX" id="k5e-jj-7r7"/>
+                                    <constraint firstItem="vF9-pu-iOa" firstAttribute="centerX" secondItem="RVm-2T-jYb" secondAttribute="centerX" id="oVJ-3i-bmt"/>
+                                    <constraint firstItem="LWO-qV-vy9" firstAttribute="top" secondItem="1lm-dE-mtJ" secondAttribute="bottom" constant="30" id="sy3-ls-MI9"/>
+                                    <constraint firstAttribute="height" constant="250" id="tNS-k8-zX9"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="10"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wgR-Zz-MaG" userLabel="premium View">
+                                <rect key="frame" x="21.666666666666657" y="301" width="350" height="250"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="iap_crown" translatesAutoresizingMaskIntoConstraints="NO" id="axi-1y-u3l">
+                                        <rect key="frame" x="132.33333333333334" y="15" width="85" height="86"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="85" id="NEb-A6-a3D"/>
+                                            <constraint firstAttribute="height" constant="86" id="lru-wz-qca"/>
+                                        </constraints>
+                                    </imageView>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IDj-CJ-Z1g">
+                                        <rect key="frame" x="37" y="173" width="276" height="52"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="52" id="0LI-wh-GZ8"/>
+                                            <constraint firstAttribute="width" constant="276" id="dCX-oi-bnV"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="Gilroy-SemiBold" family="Gilroy" pointSize="16"/>
+                                        <state key="normal" title="OK">
+                                            <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="30"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="premiumOkButtonAction:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="zqp-mw-WV9"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="It's an premium feature. Simply upgrade to premium and unlock all features." textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kav-f3-OZI" customClass="CustomLabel" customModule="AppnotrixScreenRecorder" customModuleProvider="target">
+                                        <rect key="frame" x="20" y="101" width="310" height="39.666666666666657"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <fontDescription key="fontDescription" name="Gilroy-Medium" family="Gilroy" pointSize="17"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="characterSpacing">
+                                                <real key="value" value="0.0"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemIndigoColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="IDj-CJ-Z1g" secondAttribute="bottom" constant="25" id="2Fs-u7-g2t"/>
+                                    <constraint firstAttribute="trailing" secondItem="kav-f3-OZI" secondAttribute="trailing" constant="20" id="2bM-NX-JrS"/>
+                                    <constraint firstItem="IDj-CJ-Z1g" firstAttribute="centerX" secondItem="wgR-Zz-MaG" secondAttribute="centerX" id="3i6-lW-IRY"/>
+                                    <constraint firstAttribute="width" constant="350" id="47K-zE-3ZA"/>
+                                    <constraint firstItem="axi-1y-u3l" firstAttribute="centerX" secondItem="wgR-Zz-MaG" secondAttribute="centerX" id="54I-10-mpz"/>
+                                    <constraint firstItem="IDj-CJ-Z1g" firstAttribute="centerX" secondItem="wgR-Zz-MaG" secondAttribute="centerX" id="DlS-02-NUt"/>
+                                    <constraint firstItem="kav-f3-OZI" firstAttribute="top" secondItem="axi-1y-u3l" secondAttribute="bottom" id="EXq-90-qa6"/>
+                                    <constraint firstItem="kav-f3-OZI" firstAttribute="leading" secondItem="wgR-Zz-MaG" secondAttribute="leading" constant="20" id="amG-T5-gDQ"/>
+                                    <constraint firstItem="kav-f3-OZI" firstAttribute="centerX" secondItem="wgR-Zz-MaG" secondAttribute="centerX" id="p5K-HF-vwI"/>
+                                    <constraint firstAttribute="height" constant="250" id="sOD-C0-GFs"/>
+                                    <constraint firstItem="axi-1y-u3l" firstAttribute="top" secondItem="wgR-Zz-MaG" secondAttribute="top" constant="15" id="xaO-da-QgK"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="10"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="n7V-VO-vcV"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="RVm-2T-jYb" firstAttribute="centerY" secondItem="Trs-It-C1o" secondAttribute="centerY" id="FPA-rA-46Z"/>
+                            <constraint firstItem="wgR-Zz-MaG" firstAttribute="centerX" secondItem="Trs-It-C1o" secondAttribute="centerX" id="ImP-OY-ws7"/>
+                            <constraint firstItem="RVm-2T-jYb" firstAttribute="centerX" secondItem="Trs-It-C1o" secondAttribute="centerX" id="JuA-LQ-G41"/>
+                            <constraint firstItem="wgR-Zz-MaG" firstAttribute="centerY" secondItem="Trs-It-C1o" secondAttribute="centerY" id="cPT-lv-1yS"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="btn" destination="vF9-pu-iOa" id="mPl-RX-7VS"/>
+                        <outlet property="btnPremium" destination="IDj-CJ-Z1g" id="nyj-0o-kXd"/>
+                        <outlet property="descriptionLbl" destination="LWO-qV-vy9" id="i4G-T3-N3W"/>
+                        <outlet property="descriptionPremiumLbl" destination="kav-f3-OZI" id="OBX-cV-m6d"/>
+                        <outlet property="mainView" destination="RVm-2T-jYb" id="mfR-uM-1py"/>
+                        <outlet property="premiumView" destination="wgR-Zz-MaG" id="zIj-Ru-LcY"/>
+                        <outlet property="titleLbl" destination="1lm-dE-mtJ" id="fpl-oo-xK2"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-118" y="4"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="iap_crown" width="47.333332061767578" height="42"/>
+        <namedColor name="yellowThemecolor">
+            <color red="1" green="0.792156862745098" blue="0.058823529411764705" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <systemColor name="systemIndigoColor">
+            <color red="0.34509803921568627" green="0.33725490196078434" blue="0.83921568627450982" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>

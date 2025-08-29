@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="rcP-yU-lFJ" customClass="FrameCollectionViewCell" customModule="ScreenRecorder" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="BG" translatesAutoresizingMaskIntoConstraints="NO" id="7qc-9w-v1u">
+                        <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
+                    </imageView>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Mn8-vM-mgI">
+                        <rect key="frame" x="65" y="2" width="34" height="34"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="34" id="JHo-vL-mSf"/>
+                            <constraint firstAttribute="height" constant="34" id="KtZ-Eo-WFT"/>
+                        </constraints>
+                        <color key="tintColor" systemColor="systemRedColor"/>
+                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                        <state key="normal" image="minus.circle.fill" catalog="system"/>
+                    </button>
+                </subviews>
+            </view>
+            <viewLayoutGuide key="safeArea" id="eSK-TQ-eRi"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="Mn8-vM-mgI" secondAttribute="trailing" constant="1" id="9HM-Mh-ed9"/>
+                <constraint firstAttribute="bottom" secondItem="7qc-9w-v1u" secondAttribute="bottom" id="IC6-Hk-Wit"/>
+                <constraint firstAttribute="trailing" secondItem="7qc-9w-v1u" secondAttribute="trailing" id="Kha-hb-xhV"/>
+                <constraint firstItem="7qc-9w-v1u" firstAttribute="leading" secondItem="rcP-yU-lFJ" secondAttribute="leading" id="bpl-Zv-dDh"/>
+                <constraint firstItem="Mn8-vM-mgI" firstAttribute="top" secondItem="rcP-yU-lFJ" secondAttribute="top" constant="2" id="dwE-Bf-bn7"/>
+                <constraint firstItem="7qc-9w-v1u" firstAttribute="top" secondItem="rcP-yU-lFJ" secondAttribute="top" id="pwb-cF-nWl"/>
+            </constraints>
+            <connections>
+                <outlet property="frameImageView" destination="7qc-9w-v1u" id="Haa-1g-ZCz"/>
+                <outlet property="removeButton" destination="Mn8-vM-mgI" id="MCx-6B-yEn"/>
+            </connections>
+            <point key="canvasLocation" x="27.480916030534349" y="19.718309859154932"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="BG" width="428" height="833"/>
+        <image name="minus.circle.fill" catalog="system" width="128" height="123"/>
+        <systemColor name="systemRedColor">
+            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>

@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "drop@33x.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

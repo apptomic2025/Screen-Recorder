@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="CircularStd-Black.ttf">
+            <string>CircularStd-Black</string>
+        </array>
+    </customFonts>
+    <scenes>
+        <!--Settings View Controller-->
+        <scene sceneID="s0d-6b-0kx">
+            <objects>
+                <viewController storyboardIdentifier="SettingsViewController" id="Y6W-OH-hqX" customClass="SettingsViewController" customModule="ScreenRecorder" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Xfm-ea-RUR">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" contentInsetAdjustmentBehavior="never" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" contentViewInsetsToSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fOU-qu-CfU">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </tableView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TLD-ln-vfO">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="92"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Yx2-ua-mX6">
+                                        <rect key="frame" x="338" y="43" width="43" height="43"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                                        <state key="normal" image="crossS"/>
+                                        <connections>
+                                            <action selector="dismissView:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="WoG-J7-7D9"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Settings" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="35v-xe-Bbo" customClass="CustomLabel" customModule="AppnotrixScreenRecorder" customModuleProvider="target">
+                                        <rect key="frame" x="93" y="55" width="201" height="18"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <fontDescription key="fontDescription" name="CircularStd-Black" family="Circular Std" pointSize="17"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="92" id="Mg2-l7-hhz"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="7cK-Qg-jls"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="fOU-qu-CfU" firstAttribute="top" secondItem="Xfm-ea-RUR" secondAttribute="top" id="BZQ-wM-ahe"/>
+                            <constraint firstItem="fOU-qu-CfU" firstAttribute="trailing" secondItem="7cK-Qg-jls" secondAttribute="trailing" id="LgQ-0K-ZdJ"/>
+                            <constraint firstItem="TLD-ln-vfO" firstAttribute="top" secondItem="Xfm-ea-RUR" secondAttribute="top" id="N8Y-6g-8cn"/>
+                            <constraint firstItem="TLD-ln-vfO" firstAttribute="trailing" secondItem="7cK-Qg-jls" secondAttribute="trailing" id="R2f-Jk-gDq"/>
+                            <constraint firstItem="TLD-ln-vfO" firstAttribute="leading" secondItem="7cK-Qg-jls" secondAttribute="leading" id="XvC-AP-Z2c"/>
+                            <constraint firstItem="fOU-qu-CfU" firstAttribute="leading" secondItem="7cK-Qg-jls" secondAttribute="leading" id="cUm-e9-F3x"/>
+                            <constraint firstAttribute="bottom" secondItem="fOU-qu-CfU" secondAttribute="bottom" id="eR9-Qa-bMm"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="navBar" destination="TLD-ln-vfO" id="fUI-cV-MLN"/>
+                        <outlet property="settingsTableView" destination="fOU-qu-CfU" id="IDw-ac-2mU"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-118" y="4"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="crossS" width="14.666666984558105" height="14.666666984558105"/>
+    </resources>
+</document>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="VideoToolsCollectionViewCell" id="edy-R7-4aj" customClass="VideoToolsCollectionViewCell" customModule="ScreenRecorder" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="186" height="186"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="186" height="186"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ORv-oc-nrB">
+                        <rect key="frame" x="0.0" y="0.0" width="186" height="186"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="uHK-9N-OKc">
+                                <rect key="frame" x="73" y="64" width="40" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="AbT-if-r2M"/>
+                                    <constraint firstAttribute="width" constant="40" id="ap3-8k-wdA"/>
+                                </constraints>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="proBadge" translatesAutoresizingMaskIntoConstraints="NO" id="pjg-ML-XgT">
+                                <rect key="frame" x="156" y="12" width="18" height="18"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="18" id="8fu-rK-Hch"/>
+                                    <constraint firstAttribute="width" constant="18" id="YSX-Sz-tfc"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qoo-8O-bHZ">
+                                <rect key="frame" x="72" y="161" width="42" height="13"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="13" id="I9Q-0Z-h79"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="Qoo-8O-bHZ" firstAttribute="centerX" secondItem="ORv-oc-nrB" secondAttribute="centerX" id="P0M-hg-ZL3"/>
+                            <constraint firstAttribute="bottom" secondItem="Qoo-8O-bHZ" secondAttribute="bottom" constant="12" id="eXG-VZ-x9A"/>
+                            <constraint firstItem="pjg-ML-XgT" firstAttribute="top" secondItem="ORv-oc-nrB" secondAttribute="top" constant="12" id="jf1-Rp-Zf6"/>
+                            <constraint firstItem="uHK-9N-OKc" firstAttribute="centerY" secondItem="ORv-oc-nrB" secondAttribute="centerY" constant="-9" id="myT-XT-67i"/>
+                            <constraint firstAttribute="trailing" secondItem="pjg-ML-XgT" secondAttribute="trailing" constant="12" id="qyI-TS-oOC"/>
+                            <constraint firstItem="uHK-9N-OKc" firstAttribute="centerX" secondItem="ORv-oc-nrB" secondAttribute="centerX" id="saH-7E-zE2"/>
+                        </constraints>
+                    </view>
+                </subviews>
+            </view>
+            <viewLayoutGuide key="safeArea" id="eQS-Qt-2UE"/>
+            <constraints>
+                <constraint firstItem="ORv-oc-nrB" firstAttribute="top" secondItem="edy-R7-4aj" secondAttribute="top" id="B12-Pj-cJW"/>
+                <constraint firstItem="ORv-oc-nrB" firstAttribute="leading" secondItem="edy-R7-4aj" secondAttribute="leading" id="ffg-vO-tBM"/>
+                <constraint firstAttribute="bottom" secondItem="ORv-oc-nrB" secondAttribute="bottom" id="l24-Nk-QY4"/>
+                <constraint firstAttribute="trailing" secondItem="ORv-oc-nrB" secondAttribute="trailing" id="obZ-LK-kuh"/>
+            </constraints>
+            <connections>
+                <outlet property="bgView" destination="ORv-oc-nrB" id="GIw-1t-bmE"/>
+                <outlet property="iconImageView" destination="uHK-9N-OKc" id="lyw-2Q-8uM"/>
+                <outlet property="imgViewProBadge" destination="pjg-ML-XgT" id="Ldz-ig-KuB"/>
+                <outlet property="lblTitle" destination="Qoo-8O-bHZ" id="MaO-Jw-Mvn"/>
+            </connections>
+            <point key="canvasLocation" x="-105.34351145038167" y="19.718309859154932"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="proBadge" width="18" height="18"/>
+    </resources>
+</document>

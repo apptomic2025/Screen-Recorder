@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="CircularStd-Medium.ttf">
+            <string>CircularStd-Medium</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="EditorCVCell" id="f1d-xF-i3t" customClass="EditorCVCell" customModule="ScreenRecorder" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="30" height="47"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="30" height="47"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="colorfilter" translatesAutoresizingMaskIntoConstraints="NO" id="pbe-yg-nTA">
+                        <rect key="frame" x="3" y="0.0" width="24" height="24"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="24" id="kab-7e-oEu"/>
+                            <constraint firstAttribute="width" constant="24" id="ybi-5Q-pJ8"/>
+                        </constraints>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TRIM" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mtn-fF-rX4">
+                        <rect key="frame" x="0.33333333333333393" y="31" width="29.666666666666664" height="16"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="16" id="WeQ-nT-7Du"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="CircularStd-Medium" family="Circular Std" pointSize="12"/>
+                        <color key="textColor" red="0.2627450980392157" green="0.2627450980392157" blue="0.2627450980392157" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+            </view>
+            <viewLayoutGuide key="safeArea" id="TW1-eQ-5nj"/>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstItem="pbe-yg-nTA" firstAttribute="top" secondItem="f1d-xF-i3t" secondAttribute="top" id="Ppu-9O-FZz"/>
+                <constraint firstItem="pbe-yg-nTA" firstAttribute="centerX" secondItem="f1d-xF-i3t" secondAttribute="centerX" id="YaB-0U-Cit"/>
+                <constraint firstAttribute="bottom" secondItem="mtn-fF-rX4" secondAttribute="bottom" id="t37-zt-g3j"/>
+                <constraint firstItem="mtn-fF-rX4" firstAttribute="centerX" secondItem="f1d-xF-i3t" secondAttribute="centerX" id="ucE-Rk-cuD"/>
+            </constraints>
+            <connections>
+                <outlet property="iconImgView" destination="pbe-yg-nTA" id="4K6-k4-vfT"/>
+                <outlet property="titleLbl" destination="mtn-fF-rX4" id="ciJ-Xh-k28"/>
+            </connections>
+            <point key="canvasLocation" x="66" y="21"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="colorfilter" width="24" height="24"/>
+    </resources>
+</document>
