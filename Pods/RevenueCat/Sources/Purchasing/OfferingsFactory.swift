@@ -62,12 +62,24 @@ class OfferingsFactory {
             return nil
         }()
 
+        let paywallDraftComponents: Offering.PaywallComponents? = {
+            if let uiConfig, let paywallDraftComponents = offering.draftPaywallComponents {
+                return .init(
+                    uiConfig: uiConfig,
+                    data: paywallDraftComponents
+                )
+            }
+            return nil
+        }()
+
         return Offering(identifier: offering.identifier,
                         serverDescription: offering.description,
                         metadata: offering.metadata.mapValues(\.asAny),
                         paywall: offering.paywall,
                         paywallComponents: paywallComponents,
-                        availablePackages: availablePackages)
+                        draftPaywallComponents: paywallDraftComponents,
+                        availablePackages: availablePackages,
+                        webCheckoutUrl: offering.webCheckoutUrl)
     }
 
     func createPackage(
@@ -81,7 +93,8 @@ class OfferingsFactory {
 
         return .init(package: data,
                      product: product,
-                     offeringIdentifier: offeringIdentifier)
+                     offeringIdentifier: offeringIdentifier,
+                     webCheckoutUrl: data.webCheckoutUrl)
     }
 
     func createPlacement(
@@ -107,12 +120,14 @@ private extension Package {
     convenience init(
         package: OfferingsResponse.Offering.Package,
         product: StoreProduct,
-        offeringIdentifier: String
+        offeringIdentifier: String,
+        webCheckoutUrl: URL?
     ) {
         self.init(identifier: package.identifier,
                   packageType: Package.packageType(from: package.identifier),
                   storeProduct: product,
-                  offeringIdentifier: offeringIdentifier)
+                  offeringIdentifier: offeringIdentifier,
+                  webCheckoutUrl: webCheckoutUrl)
     }
 
 }

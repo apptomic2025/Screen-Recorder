@@ -27,6 +27,17 @@ public protocol PurchasesType: AnyObject {
     var appUserID: String { get }
 
     /**
+     * The three-letter code representing the country or region
+     * associated with the App Store storefront.
+     * - Note: This property uses the ISO 3166-1 Alpha-3 country code representation.
+     * 
+     * #### Related articles
+     * - ``Purchases/getStorefront(completion:)``
+     * - ``Purchases/getStorefront()``
+     */
+    var storeFrontCountryCode: String? { get }
+
+    /**
      * The ``appUserID`` used by ``Purchases``.
      * If not passed on initialization this will be generated and cached by ``Purchases``.
      */
@@ -48,6 +59,28 @@ public protocol PurchasesType: AnyObject {
     var delegate: PurchasesDelegate? { get set }
 
     #if !ENABLE_CUSTOM_ENTITLEMENT_COMPUTATION
+
+    /**
+     * Obtain the storefront currently used by the Apple account. This will use StoreKit 2 first,
+     * and if not possible, fallback to StoreKit 1. It will be `nil` if we can't obtain Apple's storefront.
+     *
+     * The `completion` block will be called with the latest Apple account storefront
+     *
+     * #### Related Articles
+     * - ``Purchases/storeFrontCountryCode``
+     * - ``Purchases/getStorefront()``
+     */
+    func getStorefront(completion: @escaping GetStorefrontBlock)
+
+    /**
+     * Obtain the storefront currently used by the Apple account. This will use StoreKit 2 first,
+     * and if not possible, fallback to StoreKit 1. It will be `nil` if we can't obtain Apple's storefront.
+     *
+     * #### Related Articles
+     * - ``Purchases/storeFrontCountryCode``
+     * - ``Purchases/getStorefront(completion:)``
+     */
+    func getStorefront() async -> Storefront?
 
     /**
      * This function will log in the current user with an ``appUserID``.
@@ -945,6 +978,42 @@ public protocol PurchasesType: AnyObject {
         completion: @escaping (CustomerInfo?, PublicError?) -> Void
     )
 
+    /**
+     * Fetches the virtual currencies for the current subscriber.
+     *
+     * - Parameter completion: The callback that is called when the request is complete with a ``VirtualCurrencies``
+     * object containing the subscriber's virtual currencies.
+     *
+     * #### Related Articles
+     * -  [Virtual Currencies](https://www.revenuecat.com/docs/offerings/virtual-currency)
+     */
+    @objc
+    func getVirtualCurrencies(
+        completion: @escaping @Sendable (VirtualCurrencies?, PublicError?) -> Void
+    )
+
+    /**
+     * The currently cached ``VirtualCurrencies`` if one is available.
+     * This is synchronous, and therefore useful for contexts where an app needs a `VirtualCurrencies`
+     * right away without waiting for a callback, like a SwiftUI view.
+     *
+     * This allows initializing state to ensure that UI can be loaded from the very first frame.
+     */
+    var cachedVirtualCurrencies: VirtualCurrencies? { get }
+
+    /**
+     * Invalidates the cache for virtual currencies.
+     *
+     * This is useful for cases where a virtual currency's balance might have been updated
+     * outside of the app, like if you decreased a user's balance from the user spending a virtual currency,
+     * or if you increased the balance from your backend using the server APIs.
+     *
+     * #### Related Articles
+     * -  [Virtual Currencies](https://www.revenuecat.com/docs/offerings/virtual-currency)
+     */
+    @objc
+    func invalidateVirtualCurrenciesCache()
+
     // MARK: - Deprecated
 
     // swiftlint:disable missing_docs
@@ -1200,8 +1269,17 @@ public protocol PurchasesSwiftType: AnyObject {
     func eligibleWinBackOffers(
         forPackage package: Package
     ) async throws -> [WinBackOffer]
-    #endif
 
+    /**
+     * Fetches the virtual currencies for the current subscriber.
+     *
+     * - Returns: The ``VirtualCurrencies`` object containing the virtual currencies for the subscriber.
+     *
+     * #### Related Articles
+     * -  [Virtual Currencies](https://www.revenuecat.com/docs/offerings/virtual-currency)
+     */
+    func virtualCurrencies() async throws -> VirtualCurrencies
+    #endif
 }
 
 // MARK: -
@@ -1212,6 +1290,13 @@ internal protocol InternalPurchasesType: AnyObject {
     /// Performs an unauthenticated request to the API to verify connectivity.
     /// - Throws: `PublicError` if request failed.
     func healthRequest(signatureVerification: Bool) async throws
+
+    #if DEBUG
+    /// Requests an in-depth report of the SDK's configuration from the server.
+    /// - Throws: A `BackendError` if the request fails due to an invalid API key or connectivity issues.
+    /// - Returns: A health report containing all checks performed on the server and their status.
+    func healthReport() async -> PurchasesDiagnostics.SDKHealthReport
+    #endif
 
     func offerings(fetchPolicy: OfferingsManager.FetchPolicy) async throws -> Offerings
 

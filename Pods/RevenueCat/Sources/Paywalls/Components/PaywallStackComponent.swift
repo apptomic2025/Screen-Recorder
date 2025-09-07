@@ -10,7 +10,7 @@
 //  StackComponent.swift
 //
 //  Created by James Borthwick on 2024-08-20.
-// swiftlint:disable missing_docs
+// swiftlint:disable missing_docs nesting
 
 import Foundation
 
@@ -18,7 +18,19 @@ public extension PaywallComponent {
 
     final class StackComponent: PaywallComponentBase {
 
+        public enum Overflow: String, PaywallComponentBase {
+            case `default`
+            case scroll
+
+            public init(from decoder: Decoder) throws {
+                let container = try decoder.singleValueContainer()
+                let rawValue = try? container.decode(String.self)
+                self = Overflow(rawValue: rawValue ?? "") ?? .default
+            }
+        }
+
         let type: ComponentType
+        public let visible: Bool?
         public let components: [PaywallComponent]
         public let size: Size
         public let spacing: CGFloat?
@@ -31,10 +43,12 @@ public extension PaywallComponent {
         public let border: Border?
         public let shadow: Shadow?
         public let badge: Badge?
+        public let overflow: Overflow?
 
         public let overrides: ComponentOverrides<PartialStackComponent>?
 
         public init(
+            visible: Bool? = nil,
             components: [PaywallComponent],
             dimension: Dimension = .vertical(.center, .start),
             size: Size = .init(width: .fill, height: .fit),
@@ -47,8 +61,10 @@ public extension PaywallComponent {
             border: Border? = nil,
             shadow: Shadow? = nil,
             badge: Badge? = nil,
+            overflow: Overflow? = nil,
             overrides: ComponentOverrides<PartialStackComponent>? = nil
         ) {
+            self.visible = visible
             self.components = components
             self.size = size
             self.spacing = spacing
@@ -62,10 +78,12 @@ public extension PaywallComponent {
             self.border = border
             self.shadow = shadow
             self.badge = badge
+            self.overflow = overflow
             self.overrides = overrides
         }
         public func hash(into hasher: inout Hasher) {
             hasher.combine(type)
+            hasher.combine(visible)
             hasher.combine(components)
             hasher.combine(size)
             hasher.combine(spacing)
@@ -78,11 +96,13 @@ public extension PaywallComponent {
             hasher.combine(border)
             hasher.combine(shadow)
             hasher.combine(badge)
+            hasher.combine(overflow)
             hasher.combine(overrides)
         }
 
         public static func == (lhs: StackComponent, rhs: StackComponent) -> Bool {
             return lhs.type == rhs.type &&
+                   lhs.visible == rhs.visible &&
                    lhs.components == rhs.components &&
                    lhs.size == rhs.size &&
                    lhs.spacing == rhs.spacing &&
@@ -95,6 +115,7 @@ public extension PaywallComponent {
                    lhs.border == rhs.border &&
                    lhs.shadow == rhs.shadow &&
                    lhs.badge == rhs.badge &&
+                   lhs.overflow == rhs.overflow &&
                    lhs.overrides == rhs.overrides
         }
     }
@@ -112,6 +133,7 @@ public extension PaywallComponent {
         public let shape: Shape?
         public let border: Border?
         public let shadow: Shadow?
+        public let overflow: PaywallComponent.StackComponent.Overflow?
         public let badge: Badge?
 
         public init(
@@ -126,6 +148,7 @@ public extension PaywallComponent {
             shape: Shape? = nil,
             border: Border? = nil,
             shadow: Shadow? = nil,
+            overflow: PaywallComponent.StackComponent.Overflow? = nil,
             badge: Badge? = nil
         ) {
             self.visible = visible
@@ -139,6 +162,7 @@ public extension PaywallComponent {
             self.shape = shape
             self.border = border
             self.shadow = shadow
+            self.overflow = overflow
             self.badge = badge
         }
 
@@ -154,6 +178,7 @@ public extension PaywallComponent {
             hasher.combine(shape)
             hasher.combine(border)
             hasher.combine(shadow)
+            hasher.combine(overflow)
             hasher.combine(badge)
         }
 
@@ -169,6 +194,7 @@ public extension PaywallComponent {
                    lhs.shape == rhs.shape &&
                    lhs.border == rhs.border &&
                    lhs.shadow == rhs.shadow &&
+                   lhs.overflow == rhs.overflow &&
                    lhs.badge == rhs.badge
         }
     }

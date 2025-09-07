@@ -46,6 +46,16 @@ import Foundation
     /// For entitlements granted via RevenueCat's External Purchases API.
     @objc(RCExternal) case external = 8
 
+    /// For entitlements granted via Paddle.
+    @objc(RCPaddle) case paddle = 9
+
+    #if SIMULATED_STORE
+
+    /// For entitlements granted via the Test Store.
+    @objc(RCTestStore) case testStore = 10
+
+    #endif
+
 }
 
 extension Store: CaseIterable {}
@@ -70,6 +80,9 @@ extension Store: DefaultValueProvider {
 
     /// If the entitlement is under a trial period.
     @objc(RCTrial) case trial = 2
+
+    /// If the entitlement is under a prepaid period. This is Play Store only.
+    @objc(RCPrepaid) case prepaid = 3
 }
 
 extension PeriodType: CaseIterable {}
@@ -242,7 +255,8 @@ extension PeriodType: DefaultValueProvider {
             willRenew: Self.willRenewWithExpirationDate(expirationDate: subscription.expiresDate,
                                                         store: subscription.store,
                                                         unsubscribeDetectedAt: subscription.unsubscribeDetectedAt,
-                                                        billingIssueDetectedAt: subscription.billingIssuesDetectedAt),
+                                                        billingIssueDetectedAt: subscription.billingIssuesDetectedAt,
+                                                        periodType: subscription.periodType),
             periodType: subscription.periodType,
             latestPurchaseDate: entitlement.purchaseDate,
             originalPurchaseDate: subscription.originalPurchaseDate,
@@ -304,13 +318,16 @@ extension EntitlementInfo {
     static func willRenewWithExpirationDate(expirationDate: Date?,
                                             store: Store,
                                             unsubscribeDetectedAt: Date?,
-                                            billingIssueDetectedAt: Date?) -> Bool {
+                                            billingIssueDetectedAt: Date?,
+                                            periodType: PeriodType?) -> Bool {
         let isPromo = store == .promotional
         let isLifetime = expirationDate == nil
         let hasUnsubscribed = unsubscribeDetectedAt != nil
         let hasBillingIssues = billingIssueDetectedAt != nil
+        // This is Play Store only for now. 
+        let isPrepaid = periodType == .prepaid
 
-        return !(isPromo || isLifetime || hasUnsubscribed || hasBillingIssues)
+        return !(isPromo || isLifetime || hasUnsubscribed || hasBillingIssues || isPrepaid)
     }
 
 }

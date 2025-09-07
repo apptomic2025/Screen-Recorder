@@ -390,10 +390,12 @@ enum ErrorUtils {
      * - [`StoreKitError.notAvailableInStorefront`](https://rev.cat/storekit-error-not-available-in-storefront)
      */
     static func productNotAvailableForPurchaseError(
+        withMessage message: String? = nil,
         error: Error? = nil,
         fileName: String = #fileID, functionName: String = #function, line: UInt = #line
     ) -> PurchasesError {
         return ErrorUtils.error(with: .productNotAvailableForPurchaseError,
+                                message: message,
                                 underlyingError: error)
     }
 
@@ -555,6 +557,22 @@ enum ErrorUtils {
     ) -> PurchasesError {
         return ErrorUtils.error(with: .featureNotSupportedWithStoreKit1,
                                 fileName: fileName, functionName: functionName, line: line)
+    }
+
+    /**
+     * Constructs an Error with the ``ErrorCode/unsupportedError`` code.
+     *
+     * - Note: This error is used  when trying to use a feature that isn't supported
+     * by StoreKit 1 when the SDK is running in StoreKit 1 mode.
+     */
+    static func unsupportedInUIPreviewModeError(
+        fileName: String = #fileID, functionName: String = #function, line: UInt = #line
+    ) -> PurchasesError {
+        return ErrorUtils.error(with: .unsupportedError,
+                                message: "Operation not supported in UI preview mode",
+                                fileName: fileName,
+                                functionName: functionName,
+                                line: line)
     }
 }
 

@@ -303,7 +303,7 @@ public class VideoMaker: NSObject {
         var presentTime = CMTime(seconds: 0, preferredTimescale: Int32(self.timescale))
         var i = 0
         
-        writerInput.requestMediaDataWhenReady(on: self.mediaInputQueue) { 
+        writerInput.requestMediaDataWhenReady(on: self.mediaInputQueue) {
             while true {
                 if i >= self.images.count {
                     break

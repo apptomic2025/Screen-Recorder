@@ -86,12 +86,22 @@ class IdentityManager: CurrentUserProvider {
     }
 
     func logIn(appUserID: String, completion: @escaping IdentityAPI.LogInResponseHandler) {
+        guard self.currentAppUserID != Self.uiPreviewModeAppUserID && appUserID != Self.uiPreviewModeAppUserID else {
+            completion(.failure(.unsupportedInUIPreviewMode()))
+            return
+        }
+
         self.attributeSyncing.syncSubscriberAttributes(currentAppUserID: self.currentAppUserID) {
             self.performLogIn(appUserID: appUserID, completion: completion)
         }
     }
 
     func logOut(completion: @escaping (PurchasesError?) -> Void) {
+        guard self.currentAppUserID != Self.uiPreviewModeAppUserID else {
+            completion(ErrorUtils.unsupportedInUIPreviewModeError())
+            return
+        }
+
         self.attributeSyncing.syncSubscriberAttributes(currentAppUserID: self.currentAppUserID) {
             self.performLogOut(completion: completion)
         }
@@ -197,7 +207,7 @@ private extension IdentityManager {
 
     private func shouldInvalidateCaches(for appUserID: String) -> Bool {
         guard self.backend.signatureVerificationEnabled,
-              let info = self.customerInfoManager.cachedCustomerInfo(appUserID: appUserID) else {
+              let info = try? self.customerInfoManager.cachedCustomerInfo(appUserID: appUserID) else {
             return false
         }
 
