@@ -14,6 +14,18 @@ enum LiveBroadcastType{
 
 class BroadCastVC: UIViewController {
     
+    @IBOutlet weak var lblLiveBroadcast: UILabel!{
+        didSet{
+            self.lblLiveBroadcast.font = .appFont_CircularStd(type: .bold, size: 20)
+            self.lblLiveBroadcast.textColor = UIColor(hex: "#151517")
+        }
+    }
+    
+    @IBOutlet weak var navView: UIView!
+    @IBOutlet weak var cnstNavViewHeight: NSLayoutConstraint!
+    
+    var isFirstTimeLoaded: Bool = false
+    
     override var preferredStatusBarStyle: UIStatusBarStyle{
         return .lightContent
     }
@@ -21,6 +33,19 @@ class BroadCastVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
+    
+        override func viewDidLayoutSubviews() {
+            super.viewDidLayoutSubviews()
+            if !isFirstTimeLoaded {
+                isFirstTimeLoaded = true
+                setupUI()
+            }
+        }
+
+        private func setupUI(){
+            let notchType = Device.getNotchType()
+            cnstNavViewHeight.constant = notchType.height
+        }
     
     private func gotoDetailVC(_ type: LiveBroadcastType){
         if let vc = loadVCfromStoryBoard(name: "Broadcast", identifier: "BroadcastDetailVC") as? BroadcastDetailVC{
