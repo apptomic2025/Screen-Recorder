@@ -574,6 +574,7 @@ class OnboardingVC: UIViewController {
             print("Face Cam selected")
             selectToolType = .faceCam
             let actionsheet = UIAlertController(title: "Select video source", message: "React to videos from Screen Recorder Camera Roll or YouTube", preferredStyle: .actionSheet)
+            actionsheet.overrideUserInterfaceStyle = .light
             
             actionsheet.addAction(UIAlertAction(title: "My Recordings", style: .default , handler:{ (UIAlertAction)in
                 self.gotToMyVideos(isComeFaceCam: true)
