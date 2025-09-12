@@ -26,7 +26,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func setIntroAsRoot(){
-        if let introVC = loadVCfromStoryBoard(name: "Intro", identifier: "IntroVC") as? IntroVC{
+        if let introVC = loadVCfromStoryBoard(name: "Intro", identifier: "IntroController") as? IntroController{
             let navVC = NoStatusBarNavVC(rootViewController: introVC)
             self.window?.rootViewController = navVC
         }
@@ -39,7 +39,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func setOnboardingAsRoot(){
-        if let navVC = loadVCfromStoryBoard(name: "Main", identifier: "DarkNavVC") as? DarkNavVC{
+//        if let navVC = loadVCfromStoryBoard(name: "Main", identifier: "DarkNavVC") as? DarkNavVC{
+//            self.window?.rootViewController = navVC
+//        }
+        if let navVC = loadVCfromStoryBoard(name: "HomeVC", identifier: "DarkNavVC") as? DarkNavVC{
             self.window?.rootViewController = navVC
         }
         self.window?.makeKeyAndVisible()

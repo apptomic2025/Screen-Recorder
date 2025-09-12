@@ -712,7 +712,7 @@ class OnboardingVC: UIViewController {
     
     @objc func btnIAPAction(){
         hepticFeedBack()
-        if let iapViewController = loadVCfromStoryBoard(name: "IAP", identifier: "IAPVC") as? IAPVC{
+        if let iapViewController = loadVCfromStoryBoard(name: "IAP", identifier: "IAPController") as? IAPController{
             iapViewController.modalPresentationStyle = .fullScreen
             self.present(iapViewController, animated: true, completion: nil)
         }
@@ -753,18 +753,6 @@ extension OnboardingVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             //load thumb image
             if let fileName = savedVideos[indexPath.row].thumbName, let url = DirectoryManager.shared.appGroupThumbBaseURL()?.appendingPathComponent(fileName){
                 cell.fileThumbnailImgView.image = UIImage(contentsOfFile: url.path)
-            }else{
-                
-                // do not taste with this code
-                //keep it diable
-                //generating image in cell for row is very bad practice
-                
-     /*           if let fileName = savedVideos[indexPath.row].name, let url = DirectoryManager.shared.appGroupBaseURL()?.appendingPathComponent(fileName), let img = generateThumbnail(url: url){
-                    cell.fileThumbnailImgView.image = img
-                }else{
-                    cell.fileThumbnailImgView.image = UIImage(named: "")
-                }*/
-                
             }
             
             cell.video = self.savedVideos[indexPath.item]

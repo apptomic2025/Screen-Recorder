@@ -228,7 +228,7 @@ extension SettingsViewController: UITableViewDelegate{
         tableView.deselectRow(at: indexPath, animated: true)
         
         if indexPath.section == 0 && !AppData.premiumUser{
-            if let iapViewController = loadVCfromStoryBoard(name: "IAP", identifier: "IAPVC") as? IAPVC{
+            if let iapViewController = loadVCfromStoryBoard(name: "IAP", identifier: "IAPController") as? IAPController{
                 //iapViewController.delegate = self
                 iapViewController.modalPresentationStyle = .fullScreen
                 self.present(iapViewController, animated: true, completion: nil)

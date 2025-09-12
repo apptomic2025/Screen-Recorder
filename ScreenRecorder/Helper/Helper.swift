@@ -193,13 +193,19 @@ extension AppDelegate{
     
     // MARK: - REVIEW
     func requestReview(){
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.0) {
+            //SKStoreReviewController.requestReview()
+            SKStoreReviewController.requestReviewInCurrentScene()
+
+        }
+        
         if !AppData.review_showed_in_session{
             AppData.review_showed_in_session = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.0) {
-                //SKStoreReviewController.requestReview()
-                SKStoreReviewController.requestReviewInCurrentScene()
-
-            }
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.0) {
+//                //SKStoreReviewController.requestReview()
+//                SKStoreReviewController.requestReviewInCurrentScene()
+//
+//            }
         }
 //        else{
 //            if !AppData.premiumUser{

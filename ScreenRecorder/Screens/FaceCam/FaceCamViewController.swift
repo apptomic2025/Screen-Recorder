@@ -672,7 +672,7 @@ class FaceCamViewController: UIViewController, UIGestureRecognizerDelegate {
 //                            self.present(iapViewController, animated: true, completion: nil)
 //                        }
                         
-                        if let iapViewController = loadVCfromStoryBoard(name: "IAP", identifier: "IAPVC") as? IAPVC {
+                        if let iapViewController = loadVCfromStoryBoard(name: "IAP", identifier: "IAPController") as? IAPController {
                             iapViewController.modalPresentationStyle = .fullScreen
                             //self.present(iapViewController, animated: true, completion: nil)
                             self.navigationController?.pushViewController(iapViewController, animated: true)

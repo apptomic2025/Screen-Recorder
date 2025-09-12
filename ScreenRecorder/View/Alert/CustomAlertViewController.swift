@@ -35,7 +35,7 @@ class CustomAlertViewController: UIViewController {
     private var successfullRestoredState: Bool?
     private var successfullPurchasedState: Bool?
     
-    weak var delegate: IAPDelegate?
+    //weak var delegate: IAPDelegate?
     var state: AlertState?
     
     //MARK: - LIFE CYCLE
@@ -68,12 +68,12 @@ class CustomAlertViewController: UIViewController {
                 if finished == true{
                     self.remove()
                     if self.successfullRestoredState == true{
-                        NotificationCenter.default.post(name: IAPConstants.successfully_restored, object: nil)
+                        //NotificationCenter.default.post(name: IAPConstants.successfully_restored, object: nil)
                         return
                     }
                     
                     if self.successfullPurchasedState == true{
-                        self.delegate?.purchaseSuccess()
+                        //self.delegate?.purchaseSuccess()
                     }
                 }
             }
