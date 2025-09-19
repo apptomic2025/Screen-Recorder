@@ -10,23 +10,6 @@ import UIKit
 
 class Device {
 
-    enum NotchType: String {
-        case none = "No Notch"
-        case notch = "Notch"
-        case dynamicIsland = "Dynamic Island"
-        
-        var height: CGFloat {
-               switch self {
-               case .none:
-                   return 64
-               case .notch:
-                   return 92
-               case .dynamicIsland:
-                   return 103 
-               }
-           }
-    }
-
     static func getDeviceIdentifier() -> String {
         var systemInfo = utsname()
         uname(&systemInfo)
@@ -88,31 +71,5 @@ class Device {
         
         return deviceMap[identifier] ?? "Unknown Device (\(identifier))"
     }
-    
 
-    static func getNotchType() -> NotchType {
-        let identifier = getDeviceIdentifier()
-        
-        switch identifier {
-        // Dynamic Island Models
-        case "iPhone15,2", "iPhone15,3", // iPhone 14 Pro Series
-             "iPhone15,4", "iPhone15,5", "iPhone16,1", "iPhone16,2", // iPhone 15 Series
-             "iPhone17,1", "iPhone17,2", "iPhone17,3", "iPhone17,4": // iPhone 16 Series
-            return .dynamicIsland
-
-        // Regular Notch Models
-        case "iPhone10,3", "iPhone10,6", // iPhone X
-             "iPhone11,2", "iPhone11,4", "iPhone11,6", // iPhone XS, XS Max
-             "iPhone11,8", // iPhone XR
-             "iPhone12,1", "iPhone12,3", "iPhone12,5", // iPhone 11 Series
-             "iPhone13,1", "iPhone13,2", "iPhone13,3", "iPhone13,4", // iPhone 12 Series
-             "iPhone14,4", "iPhone14,5", "iPhone14,2", "iPhone14,3", // iPhone 13 Series
-             "iPhone14,7", "iPhone14,8": // iPhone 14, 14 Plus
-            return .notch
-
-        // No Notch Models (All older devices and Simulators)
-        default:
-            return .none
-        }
-    }
 }

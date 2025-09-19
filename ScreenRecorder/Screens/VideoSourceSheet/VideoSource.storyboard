@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_7" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Video Source Selection View Controller-->
+        <scene sceneID="s0d-6b-0kx">
+            <objects>
+                <viewController storyboardIdentifier="VideoSourceSelectionViewController" id="Y6W-OH-hqX" customClass="VideoSourceSelectionViewController" customModule="ScreenRecorder" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
+                        <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Face Cam" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pbU-6K-f4H">
+                                <rect key="frame" x="177.33333333333334" y="150" width="75.666666666666657" height="25"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="25" id="vNX-Av-dRW"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select a video source and start editing" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uWT-3v-5pO">
+                                <rect key="frame" x="69.333333333333343" y="181" width="291.66666666666663" height="18"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="18" id="mGv-r5-IU7"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="BpG-3Q-UgS">
+                                <rect key="frame" x="35" y="231" width="360" height="192"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6Yz-ca-ChR">
+                                        <rect key="frame" x="0.0" y="0.0" width="360" height="56"/>
+                                        <subviews>
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="cameraSource" translatesAutoresizingMaskIntoConstraints="NO" id="vbQ-Pn-K1S">
+                                                <rect key="frame" x="20" y="16" width="24" height="24"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="24" id="ME5-Lh-WL6"/>
+                                                    <constraint firstAttribute="height" constant="24" id="p6f-E4-NGu"/>
+                                                </constraints>
+                                            </imageView>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Camera Roll" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tHp-sz-f95">
+                                                <rect key="frame" x="60.000000000000007" y="18" width="91.666666666666686" height="20"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="20" id="c74-gH-prP"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KiZ-sV-SUw">
+                                                <rect key="frame" x="0.0" y="0.0" width="360" height="56"/>
+                                                <state key="normal" title="Button"/>
+                                                <buttonConfiguration key="configuration" style="plain"/>
+                                                <connections>
+                                                    <action selector="didTapCameraRoll:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="huh-IF-TS3"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <color key="backgroundColor" red="0.94509803921568625" green="0.94509803921568625" blue="0.94509803921568625" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstItem="tHp-sz-f95" firstAttribute="centerY" secondItem="6Yz-ca-ChR" secondAttribute="centerY" id="1qQ-OW-4Mn"/>
+                                            <constraint firstItem="vbQ-Pn-K1S" firstAttribute="leading" secondItem="6Yz-ca-ChR" secondAttribute="leading" constant="20" id="5Nz-Gq-bxz"/>
+                                            <constraint firstAttribute="trailing" secondItem="KiZ-sV-SUw" secondAttribute="trailing" id="DjU-kS-u8e"/>
+                                            <constraint firstItem="tHp-sz-f95" firstAttribute="leading" secondItem="vbQ-Pn-K1S" secondAttribute="trailing" constant="16" id="SCX-Mn-jgl"/>
+                                            <constraint firstAttribute="bottom" secondItem="KiZ-sV-SUw" secondAttribute="bottom" id="d1S-VQ-lRK"/>
+                                            <constraint firstItem="KiZ-sV-SUw" firstAttribute="top" secondItem="6Yz-ca-ChR" secondAttribute="top" id="e0N-QH-tYp"/>
+                                            <constraint firstItem="vbQ-Pn-K1S" firstAttribute="centerY" secondItem="6Yz-ca-ChR" secondAttribute="centerY" id="tRz-vK-Xhd"/>
+                                            <constraint firstItem="KiZ-sV-SUw" firstAttribute="leading" secondItem="6Yz-ca-ChR" secondAttribute="leading" id="vYb-Am-ycX"/>
+                                        </constraints>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="12"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hWq-ax-NWX">
+                                        <rect key="frame" x="0.0" y="68" width="360" height="56"/>
+                                        <subviews>
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="recordingSource" translatesAutoresizingMaskIntoConstraints="NO" id="KKH-iT-gAh">
+                                                <rect key="frame" x="20" y="16" width="24" height="24"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="24" id="EKc-gq-JNR"/>
+                                                    <constraint firstAttribute="width" constant="24" id="kh6-d0-buB"/>
+                                                </constraints>
+                                            </imageView>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="My Recordings" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WU2-tl-Uh8">
+                                                <rect key="frame" x="60.000000000000007" y="18" width="113.66666666666669" height="20"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="20" id="irw-xG-Pkx"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MPo-7M-Gff">
+                                                <rect key="frame" x="0.0" y="0.0" width="360" height="56"/>
+                                                <state key="normal" title="Button"/>
+                                                <buttonConfiguration key="configuration" style="plain"/>
+                                                <connections>
+                                                    <action selector="didTapMyRecordings:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="NET-ci-T5g"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <color key="backgroundColor" red="0.94509803920000002" green="0.94509803920000002" blue="0.94509803920000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstItem="MPo-7M-Gff" firstAttribute="leading" secondItem="hWq-ax-NWX" secondAttribute="leading" id="2lv-0t-vzu"/>
+                                            <constraint firstItem="WU2-tl-Uh8" firstAttribute="centerY" secondItem="hWq-ax-NWX" secondAttribute="centerY" id="QE1-69-RE2"/>
+                                            <constraint firstItem="KKH-iT-gAh" firstAttribute="leading" secondItem="hWq-ax-NWX" secondAttribute="leading" constant="20" id="VV2-1r-uu7"/>
+                                            <constraint firstItem="MPo-7M-Gff" firstAttribute="top" secondItem="hWq-ax-NWX" secondAttribute="top" id="Ylq-G4-aDm"/>
+                                            <constraint firstAttribute="trailing" secondItem="MPo-7M-Gff" secondAttribute="trailing" id="dSx-YG-kw8"/>
+                                            <constraint firstItem="WU2-tl-Uh8" firstAttribute="leading" secondItem="KKH-iT-gAh" secondAttribute="trailing" constant="16" id="eB3-oC-JiK"/>
+                                            <constraint firstAttribute="bottom" secondItem="MPo-7M-Gff" secondAttribute="bottom" id="v7m-TB-L6p"/>
+                                            <constraint firstItem="KKH-iT-gAh" firstAttribute="centerY" secondItem="hWq-ax-NWX" secondAttribute="centerY" id="vwZ-Q6-G7Z"/>
+                                        </constraints>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="12"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d0u-Nc-yVr">
+                                        <rect key="frame" x="0.0" y="136" width="360" height="56"/>
+                                        <subviews>
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="youtubeSource" translatesAutoresizingMaskIntoConstraints="NO" id="HF9-j4-Aqh">
+                                                <rect key="frame" x="20" y="16" width="24" height="24"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="24" id="BFq-yY-cWs"/>
+                                                    <constraint firstAttribute="width" constant="24" id="d9E-xd-hdz"/>
+                                                </constraints>
+                                            </imageView>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="YouTube" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kgx-Df-Hig">
+                                                <rect key="frame" x="60" y="18" width="65" height="20"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="20" id="PKG-MF-CMl"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RzB-m5-HQF">
+                                                <rect key="frame" x="0.0" y="0.0" width="360" height="56"/>
+                                                <state key="normal" title="Button"/>
+                                                <buttonConfiguration key="configuration" style="plain"/>
+                                                <connections>
+                                                    <action selector="didTapYouTube:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="k6H-7t-yJR"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <color key="backgroundColor" red="0.94509803920000002" green="0.94509803920000002" blue="0.94509803920000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstItem="kgx-Df-Hig" firstAttribute="centerY" secondItem="d0u-Nc-yVr" secondAttribute="centerY" id="Afl-Ko-a6q"/>
+                                            <constraint firstAttribute="trailing" secondItem="RzB-m5-HQF" secondAttribute="trailing" id="E8G-4h-kcF"/>
+                                            <constraint firstAttribute="bottom" secondItem="RzB-m5-HQF" secondAttribute="bottom" id="PDw-1G-f6t"/>
+                                            <constraint firstItem="RzB-m5-HQF" firstAttribute="top" secondItem="d0u-Nc-yVr" secondAttribute="top" id="YX5-mj-BcZ"/>
+                                            <constraint firstItem="RzB-m5-HQF" firstAttribute="leading" secondItem="d0u-Nc-yVr" secondAttribute="leading" id="dgU-id-DlW"/>
+                                            <constraint firstItem="HF9-j4-Aqh" firstAttribute="leading" secondItem="d0u-Nc-yVr" secondAttribute="leading" constant="20" id="dls-3n-ghM"/>
+                                            <constraint firstItem="HF9-j4-Aqh" firstAttribute="centerY" secondItem="d0u-Nc-yVr" secondAttribute="centerY" id="mgl-aJ-efc"/>
+                                            <constraint firstItem="kgx-Df-Hig" firstAttribute="leading" secondItem="HF9-j4-Aqh" secondAttribute="trailing" constant="16" id="mxU-Ow-gZh"/>
+                                        </constraints>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="12"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </view>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="192" id="XOc-C2-Yu5"/>
+                                </constraints>
+                            </stackView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="uWT-3v-5pO" firstAttribute="centerX" secondItem="5EZ-qb-Rvc" secondAttribute="centerX" id="GXj-OB-Xv3"/>
+                            <constraint firstItem="pbU-6K-f4H" firstAttribute="centerX" secondItem="5EZ-qb-Rvc" secondAttribute="centerX" id="MdB-nY-se8"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="BpG-3Q-UgS" secondAttribute="trailing" constant="35" id="Ohp-Vx-aYd"/>
+                            <constraint firstItem="BpG-3Q-UgS" firstAttribute="top" secondItem="uWT-3v-5pO" secondAttribute="bottom" constant="32" id="QIo-xy-Chk"/>
+                            <constraint firstItem="pbU-6K-f4H" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" constant="32" id="S1Z-gU-wIK"/>
+                            <constraint firstItem="BpG-3Q-UgS" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="35" id="o0b-Ll-nKw"/>
+                            <constraint firstItem="uWT-3v-5pO" firstAttribute="top" secondItem="pbU-6K-f4H" secondAttribute="bottom" constant="6" id="xRe-V5-WAE"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="lblCameraRoll" destination="tHp-sz-f95" id="Igg-ar-Mi6"/>
+                        <outlet property="lblMyRecordings" destination="WU2-tl-Uh8" id="0uX-ug-gVh"/>
+                        <outlet property="lblSubTitle" destination="uWT-3v-5pO" id="jCE-h2-C7M"/>
+                        <outlet property="lblTitle" destination="pbU-6K-f4H" id="fuC-iV-oVp"/>
+                        <outlet property="lblYouTube" destination="kgx-Df-Hig" id="hai-20-qon"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="129.76744186046511" y="4.5064377682403434"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="cameraSource" width="24" height="24"/>
+        <image name="recordingSource" width="24" height="24"/>
+        <image name="youtubeSource" width="24" height="24"/>
+    </resources>
+</document>

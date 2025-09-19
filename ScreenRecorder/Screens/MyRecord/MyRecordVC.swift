@@ -80,23 +80,7 @@ class MyRecordVC: UIViewController {
         }
     }
     
-//    func copyFilesFromBundleToDocumentsFolderWith(fileExtension: String) {
-//        if let resPath = Bundle.main.resourcePath {
-//            do {
-//                let dirContents = try FileManager.default.contentsOfDirectory(atPath: resPath)
-//                let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-//                let filteredFiles = dirContents.filter{ $0.contains(fileExtension)}
-//                for fileName in filteredFiles {
-//                    if let documentsURL = documentsURL {
-//                        let sourceURL = Bundle.main.bundleURL.appendingPathComponent(fileName)
-//                        let destURL = documentsURL.appendingPathComponent(fileName)
-//                        do { try FileManager.default.copyItem(at: sourceURL, to: destURL) } catch { }
-//                    }
-//                }
-//            } catch { }
-//        }
-//    }
-//
+
     func duplicateVideo(sender: UIButton) {
         if let selectedCell = sender.superview?.superview as? SRCVCell {
             if let indexPath = collectionView.indexPath(for: selectedCell) {
@@ -233,12 +217,12 @@ class MyRecordVC: UIViewController {
     }
     
     func goToFaceCamVC(videoUrl: URL) {
-//        let vc = loadVCfromStoryBoard(name: "FaceCam", identifier: "FaceCamViewController") as! FaceCamViewController
-//        let video = Video(videoUrl)
-//        vc.video = video
-//        DispatchQueue.main.async{
-//            self.navigationController?.pushViewController(vc, animated: true)
-//        }
+        let vc = loadVCfromStoryBoard(name: "FaceCam", identifier: "FaceCamViewController") as! FaceCamViewController
+        let video = Video(videoUrl)
+        vc.video = video
+        DispatchQueue.main.async{
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
     }
     
     func goToCommentaryVC(videoUrl: URL) {
@@ -342,87 +326,61 @@ extension MyRecordVC: UICollectionViewDelegate, UICollectionViewDataSource, UICo
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    
-        if selectToolType == .gif {
-            if let name = savedVideos[indexPath.row].name {
-                guard let url = share.appGroupBaseURL()?.appendingPathComponent(name) else { return }
-                goToVideoToGifVC(videoUrl: url)
-            }
+        
+        // 1. Get the video URL once, right at the start.
+        guard let name = savedVideos[indexPath.row].name,
+              let url = share.appGroupBaseURL()?.appendingPathComponent(name) else {
+            print("Error: Could not construct video URL.")
+            return
+        }
+        
+        // 2. Use a switch statement on the tool type for cleaner logic.
+        switch selectToolType {
+        case .gif:
+            goToVideoToGifVC(videoUrl: url)
             
-        }else if  selectToolType == .extractAudio { /// is come from my video to audion vc
-            if let name = savedVideos[indexPath.row].name {
-                guard let url = share.appGroupBaseURL()?.appendingPathComponent(name) else { return }
-                goToVideoToAudioVC(videoUrl: url)
-            }
-        }else if selectToolType == .edit {
-            if let name = savedVideos[indexPath.row].name {
-                guard let url = share.appGroupBaseURL()?.appendingPathComponent(name) else { return }
-                gotoVideoEditor(videoUrl: url)
-            }
-        }else if selectToolType == .voiceReocrd {
-            if let name = savedVideos[indexPath.row].name {
-                guard let url = share.appGroupBaseURL()?.appendingPathComponent(name) else { return }
-                gotoVoiceRecorVC(videoUrl: url)
-            }
-        }else if selectToolType == .videoToPhoto {
-            if let name = savedVideos[indexPath.row].name {
-                guard let url = share.appGroupBaseURL()?.appendingPathComponent(name) else { return }
-                goToVideoToPhotoVC(videoUrl: url)
-            }
-        }else if selectToolType == .videoToAudio {
-            if let name = savedVideos[indexPath.row].name {
-                guard let url = share.appGroupBaseURL()?.appendingPathComponent(name) else { return }
-                goToExtractMusicVC()
-            }
-        }else if selectToolType == .trim {
-            if let name = savedVideos[indexPath.row].name {
-                guard let url = share.appGroupBaseURL()?.appendingPathComponent(name) else { return }
-                gotToTrimVC(videoUrl: url)
-            }
-        }else if selectToolType == .compress {
-            if let name = savedVideos[indexPath.row].name {
-                guard let url = share.appGroupBaseURL()?.appendingPathComponent(name) else { return }
-                gotoCompressVC(videoUrl: url)
-            }
-        }else if selectToolType == .photoToVideo {
-            if let name = savedVideos[indexPath.row].name {
-                guard let url = share.appGroupBaseURL()?.appendingPathComponent(name) else { return }
-            }
-        }else if selectToolType == .speed {
-            if let name = savedVideos[indexPath.row].name {
-                guard let url = share.appGroupBaseURL()?.appendingPathComponent(name) else { return }
-                gotToSpeedVC(videoUrl: url)
-            }
-        }else if selectToolType == .crop {
-            if let name = savedVideos[indexPath.row].name {
-                guard let url = share.appGroupBaseURL()?.appendingPathComponent(name) else { return }
-                gotoCropVC(videoUrl: url)
-            }
+        case .extractAudio:
+            goToVideoToAudioVC(videoUrl: url)
             
-        } else if isComeFromFaceCam { /// home vc button action
-            ///
-            if let name = savedVideos[indexPath.row].name {
-                guard let url = share.appGroupBaseURL()?.appendingPathComponent(name) else { return }
-                goToFaceCamVC(videoUrl: url)
-            }
-        }else if isComeCommentary {
-            if let name = savedVideos[indexPath.row].name {
-                guard let url = share.appGroupBaseURL()?.appendingPathComponent(name) else { return }
-                goToCommentaryVC(videoUrl: url)
-            }
-        }else{
-//            let vc = loadVCfromStoryBoard(name: "PreviewVideo", identifier: "PreviewVideoViewController") as! PreviewVideoViewController
-//            if let name = savedVideos[indexPath.row].name {
-//                guard let documentsDirectoryPath = share.appGroupBaseURL()?.appendingPathComponent(name) else { return }
-//                let video = Video(documentsDirectoryPath)
-//                vc.video = video
-//            }
-//            self.navigationController?.pushViewController(vc, animated: true)
+        case .edit:
+            gotoVideoEditor(videoUrl: url)
+            
+        case .voiceReocrd:
+            gotoVoiceRecorVC(videoUrl: url)
+            
+        case .videoToPhoto:
+            goToVideoToPhotoVC(videoUrl: url)
+            
+        case .videoToAudio:
+            goToExtractMusicVC()
+            
+        case .trim:
+            gotToTrimVC(videoUrl: url)
+            
+        case .compress:
+            gotoCompressVC(videoUrl: url)
+            
+        case .photoToVideo:
+            print("Photo to Video selected with URL: \(url)")
+            
+        case .speed:
+            gotToSpeedVC(videoUrl: url)
+            
+        case .crop:
+            gotoCropVC(videoUrl: url)
+            
+        case .faceCam:
+            goToFaceCamVC(videoUrl: url)
+            
+        case .commentary:
+            goToCommentaryVC(videoUrl: url)
+            
+        default:
+            gotoVideoEditor(videoUrl: url)
         }
     }
     
-    /// cell layout
-    ///
+  
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let w = (DEVICE_WIDTH - 40) / 2
         let h = (285 * w)/170

@@ -130,6 +130,34 @@ func mickSetup(_ mode: AVAudioSession.Category)
        }
    }
 
+func micSetup(_ category: AVAudioSession.Category, completion: ((_ granted: Bool) -> Void)? = nil) {
+    let audioSession = AVAudioSession.sharedInstance()
+    
+    do {
+        // Set the audio session category and mode.
+        try audioSession.setCategory(category, mode: .default, options: [])
+        // Activate the audio session.
+        try audioSession.setActive(true)
+        
+        // Request permission to record.
+        audioSession.requestRecordPermission() { granted in
+            // Execute the completion handler on the main thread.
+            DispatchQueue.main.async {
+                if !granted {
+                    print("Microphone permission was denied.")
+                }
+                completion?(granted)
+            }
+        }
+    } catch {
+        // It's crucial to handle errors.
+        print("Failed to set up audio session: \(error.localizedDescription)")
+        DispatchQueue.main.async {
+            completion?(false)
+        }
+    }
+}
+
 //MARK: - NEW LOADER
 
 var loaderNew: [UIImage] = {

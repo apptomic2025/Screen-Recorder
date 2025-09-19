@@ -147,8 +147,18 @@ class BroadcastDetailVC: UIViewController {
     }
     
     private func setupUI(){
-        let notchType = Device.getNotchType()
-        cnstNavViewHeight.constant = notchType.height
+        let uiType = getDeviceUIType()
+        switch uiType {
+        case .dynamicIsland:
+            print("Device has Dynamic Island")
+            self.cnstNavViewHeight.constant = NavbarHeight.withDynamicIsland.rawValue
+        case .notch:
+            print("Device has a Notch")
+            self.cnstNavViewHeight.constant = NavbarHeight.withNotch.rawValue
+        case .noNotch:
+            print("Device has no Notch")
+            self.cnstNavViewHeight.constant = NavbarHeight.withOutNotch.rawValue
+        }
         switch type {
         case .rtmp:
             self.lblLiveBroadcastType.text = "RTMP Live"

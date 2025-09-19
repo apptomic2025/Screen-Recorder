@@ -11,16 +11,25 @@ import UIKit
 
 class SearchVideoViewController: UIViewController {
     
-    var SearchVideoViewController: SearchVideoViewController?
-    
     @IBOutlet weak var searchVideoButton: UIButton! {
         didSet{
             searchVideoButton.backgroundColor = #colorLiteral(red: 0.3335984945, green: 0.3089770675, blue: 0.9526864886, alpha: 1)
-            // searchVideoButton.isEnabled = false
         }
     }
     
     @IBOutlet weak var linkTxtF: UITextField!
+    
+    @IBOutlet weak var lblLiveBroadcast: UILabel!{
+        didSet{
+            self.lblLiveBroadcast.font = .appFont_CircularStd(type: .bold, size: 20)
+            self.lblLiveBroadcast.textColor = UIColor(hex: "#151517")
+        }
+    }
+    
+    @IBOutlet weak var navView: UIView!
+    @IBOutlet weak var cnstNavViewHeight: NSLayoutConstraint!
+    var SearchVideoViewController: SearchVideoViewController?
+    var isFirstTimeLoaded: Bool = false
     
     override var preferredStatusBarStyle: UIStatusBarStyle{
         return .lightContent
@@ -34,11 +43,34 @@ class SearchVideoViewController: UIViewController {
         let color = UIColor.white
         let attributes = [NSAttributedString.Key.foregroundColor: color]
         let attributedPlaceholder = NSAttributedString(string: linkTxtF.placeholder ?? "", attributes: attributes)
-        // Set the attributed string as the text field's placeholder
         linkTxtF.attributedPlaceholder = attributedPlaceholder
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
         view.addGestureRecognizer(tap)
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if !isFirstTimeLoaded {
+            isFirstTimeLoaded = true
+            setupUI()
+        }
+    }
+    
+    private func setupUI(){
+        let uiType = getDeviceUIType()
+        switch uiType {
+        case .dynamicIsland:
+            print("Device has Dynamic Island")
+            self.cnstNavViewHeight.constant = NavbarHeight.withDynamicIsland.rawValue
+        case .notch:
+            print("Device has a Notch")
+            self.cnstNavViewHeight.constant = NavbarHeight.withNotch.rawValue
+        case .noNotch:
+            print("Device has no Notch")
+            self.cnstNavViewHeight.constant = NavbarHeight.withOutNotch.rawValue
+        }
+        
     }
     
     @objc func dismissKeyboard() {
