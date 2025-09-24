@@ -11,13 +11,21 @@ import UIKit
 public protocol TrimmerViewDelegate: AnyObject {
     func didChangePositionBar(_ playerTime: CMTime)
     func positionBarStoppedMoving(_ playerTime: CMTime)
+    func trimmerView(_ trimmer: TrimmerView,
+                         didDrag handle: TrimmerView.Handle,
+                         x: CGFloat,
+                         time: CMTime)
+
+        func trimmerView(_ trimmer: TrimmerView,
+                         didEndDragging handle: TrimmerView.Handle,
+                         x: CGFloat,
+                         time: CMTime)
+}
+public extension TrimmerView {
+    enum Handle { case left, right }
 }
 
-/// A view to select a specific time range of a video. It consists of an asset preview with thumbnails inside a scroll view, two
-/// handles on the side to select the beginning and the end of the range, and a position bar to synchronize the control with a
-/// video preview, typically with an `AVPlayer`.
-/// Load the video by setting the `asset` property. Access the `startTime` and `endTime` of the view to get the selected time
-// range
+
 @IBDesignable public class TrimmerView: AVAssetTimeSelector {
 
     // MARK: - Properties
@@ -245,38 +253,45 @@ public protocol TrimmerViewDelegate: AnyObject {
 
     // MARK: - Trim Gestures
 
-    @objc func handlePanGesture(_ gestureRecognizer: UIPanGestureRecognizer) {
-        guard let view = gestureRecognizer.view, let superView = gestureRecognizer.view?.superview else { return }
-        let isLeftGesture = view == leftHandleView
-        switch gestureRecognizer.state {
+    @objc func handlePanGesture(_ gr: UIPanGestureRecognizer) {
+        guard let view = gr.view, let superView = gr.view?.superview else { return }
+        let isLeft = (view == leftHandleView)
+        let which: Handle = isLeft ? .left : .right
 
+        switch gr.state {
         case .began:
-            if isLeftGesture {
-                currentLeftConstraint = leftConstraint!.constant
-            } else {
-                currentRightConstraint = rightConstraint!.constant
-            }
+            if isLeft { currentLeftConstraint = leftConstraint!.constant }
+            else      { currentRightConstraint = rightConstraint!.constant }
             updateSelectedTime(stoppedMoving: false)
+
         case .changed:
-            let translation = gestureRecognizer.translation(in: superView)
-            if isLeftGesture {
-                updateLeftConstraint(with: translation)
-            } else {
-                updateRightConstraint(with: translation)
-            }
+            let translation = gr.translation(in: superView)
+            if isLeft { updateLeftConstraint(with: translation) }
+            else      { updateRightConstraint(with: translation) }
             layoutIfNeeded()
-            if let startTime = startTime, isLeftGesture {
-                seek(to: startTime)
-            } else if let endTime = endTime {
-                seek(to: endTime)
+
+            // live seek so that bubble/position bar sync থাকে
+            if let t = isLeft ? startTime : endTime {
+                seek(to: t)
+                // 👉 EditorVC-কে জানাও: কোন হ্যান্ডেল, x ও time
+                let x = (isLeft ? leftHandleView.center.x : rightHandleView.center.x)
+                delegate?.trimmerView(self, didDrag: which, x: x, time: t)
             }
+
             updateSelectedTime(stoppedMoving: false)
 
         case .cancelled, .ended, .failed:
+            // 👉 ড্র্যাগ শেষ – final value পাঠাও
+            if let t = isLeft ? startTime : endTime {
+                let x = (isLeft ? leftHandleView.center.x : rightHandleView.center.x)
+                delegate?.trimmerView(self, didEndDragging: which, x: x, time: t)
+            }
             updateSelectedTime(stoppedMoving: true)
+
         default: break
         }
     }
+
 
     private func updateLeftConstraint(with translation: CGPoint) {
         let maxConstraint = max(rightHandleView.frame.origin.x - handleWidth - minimumDistanceBetweenHandle, 0)

@@ -205,6 +205,25 @@ extension TrimVC: TrimmerViewDelegate {
             endTimeLabel.text = trimmerView.endTime?.toHourMinuteSecond()
         }
     }
+    
+    func trimmerView(_ trimmer: TrimmerView,
+                         didDrag handle: TrimmerView.Handle,
+                         x: CGFloat,
+                         time: CMTime) {
+            // লাইভ আপডেট — UI লেবেল/স্লাইডার ইত্যাদি
+            let mmss = String(format: "%02d:%02d", Int(time.seconds) / 60, Int(time.seconds) % 60)
+            print("Dragging \(handle)  x=\(x)  time=\(mmss)")
+            // e.g. currentTimeLabel.text = mmss
+        }
+
+        func trimmerView(_ trimmer: TrimmerView,
+                         didEndDragging handle: TrimmerView.Handle,
+                         x: CGFloat,
+                         time: CMTime) {
+            let mmss = String(format: "%02d:%02d", Int(time.seconds) / 60, Int(time.seconds) % 60)
+            print("Ended \(handle)  x=\(x)  time=\(mmss)")
+            // e.g. player.seek(to: time)
+        }
 }
 
 extension CMTime {

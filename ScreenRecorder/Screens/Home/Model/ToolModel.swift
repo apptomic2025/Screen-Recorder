@@ -17,3 +17,6 @@ var tools: [ToolModel] = [
     ToolModel(title: "Video Edit", IconImg: UIImage(named: "videoEdit"), isPremium: false)
 ]
 
+enum SelectToolType: Int {
+    case faceCam, commentary, gif, edit, voiceReocrd, photoToVideo,videoToPhoto, videoToAudio, trim, compress, speed, crop, extractAudio, none
+}

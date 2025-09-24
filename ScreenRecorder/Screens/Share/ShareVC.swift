@@ -58,11 +58,7 @@ class ShareVC: UIViewController {
         }
     }
     
-    @IBOutlet weak var savedTikView: UIView!{
-        didSet{
-            savedTikView.alpha = 0.0
-        }
-    }
+    @IBOutlet weak var savedTikView: UIView!
     @IBOutlet weak var downloadView: UIView!{
         didSet{
             downloadView.alpha = 0.0
@@ -79,15 +75,13 @@ class ShareVC: UIViewController {
     @IBOutlet weak var downloadContentView: UIView!{
         didSet{
             downloadContentView.layer.cornerRadius = 3
-            downloadContentView.backgroundColor = UIColor.darkGray.withAlphaComponent(0.9)
+            //downloadContentView.backgroundColor = UIColor.darkGray.withAlphaComponent(0.9)
             downloadContentView.clipsToBounds = true
             
         }
     }
     @IBOutlet weak var downloadProgressView: UIView!{
         didSet{
-            //downloadProgressView.layer.cornerRadius = 10.0
-            //downloadProgressView.roundCorners(corners: [.topLeft,.bottomLeft], radius: Int(10.0))
             downloadProgressView.frame.size.width = 0.0
             downloadProgressView.backgroundColor = .white
         }
@@ -113,12 +107,33 @@ class ShareVC: UIViewController {
             self.shareCollectionView.delegate = self
             self.shareCollectionView.dataSource = self
             self.shareCollectionView.register(UINib(nibName: "ShareCVCell", bundle: nil), forCellWithReuseIdentifier: identifier)
-            self.shareCollectionView.contentInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
+            self.shareCollectionView.contentInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+            self.shareCollectionView.backgroundColor = .white
         }
     }
     
-    
     @IBOutlet weak var exportBgView: UIVisualEffectView!
+    @IBOutlet weak var tickImageView: UIImageView!
+    @IBOutlet weak var lblTittle: UILabel!{
+        didSet{
+            self.lblTittle.font = .appFont_CircularStd(type: .bold, size: 20)
+            self.lblTittle.textColor = UIColor(hex: "#151517")
+        }
+    }
+    @IBOutlet weak var lblVideoSaved: UILabel!{
+        didSet{
+            self.lblVideoSaved.font = .appFont_CircularStd(type: .book, size: 15)
+            self.lblVideoSaved.textColor = UIColor(hex: "#151517")
+        }
+    }
+    @IBOutlet weak var navView: UIView!
+    @IBOutlet weak var cnstNavViewHeight: NSLayoutConstraint!
+    @IBOutlet weak var lblShareTo: UILabel!{
+        didSet{
+            self.lblShareTo.font = .appFont_CircularStd(type: .medium, size: 20)
+            self.lblShareTo.textColor = UIColor(hex: "#151517")
+        }
+    }
     
     var video:Video?
     var videoComposition: AVVideoComposition?
@@ -180,7 +195,7 @@ class ShareVC: UIViewController {
         
         if !isFirstTimeLoaded{
             isFirstTimeLoaded = true
-            
+            setupNavHeight()
             if let videoURL = self.video?.videoURL {
                 loadVideo(videoURL)
             }
@@ -190,6 +205,21 @@ class ShareVC: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         self.videoView.invalidate()
+    }
+    
+    private func setupNavHeight(){
+        let uiType = getDeviceUIType()
+        switch uiType {
+        case .dynamicIsland:
+            print("Device has Dynamic Island")
+            self.cnstNavViewHeight.constant = NavbarHeight.withDynamicIsland.rawValue
+        case .notch:
+            print("Device has a Notch")
+            self.cnstNavViewHeight.constant = NavbarHeight.withNotch.rawValue
+        case .noNotch:
+            print("Device has no Notch")
+            self.cnstNavViewHeight.constant = NavbarHeight.withOutNotch.rawValue
+        }
     }
     
     @objc @IBAction func playButtonAction(_ sender: UIButton) {
@@ -649,16 +679,11 @@ extension ShareVC :UICollectionViewDataSource{
         cell.imgView.contentMode = .scaleAspectFit
         
         if let sourceImage = UIImage(named: share.icon){
-            
             cell.imgView.image = sourceImage
         }else{
             
         }
-        if indexPath.row == 0 {
-            cell.lbl.textColor = #colorLiteral(red: 0.3343988657, green: 0.3048760295, blue: 0.9527602792, alpha: 1)
-        }
         cell.lbl.text = share.title
-        
         return cell
     }
 }
@@ -695,11 +720,7 @@ extension ShareVC :UICollectionViewDelegate{
 extension ShareVC :UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        if indexPath.item == 5{
-            return CGSize(width: 62, height: 77)
-        }else{
-            return CGSize(width: 62, height: 77)
-        }
+        return CGSize(width: 64, height: 77)
         
     }
     

@@ -26,7 +26,22 @@ class VideoToGIFViewController: UIViewController {
     }
 
     @IBOutlet weak var trimmerView: TrimmerView!
-    @IBOutlet weak var trimmerDurationLbl: UILabel!
+    @IBOutlet weak var lblTittle: UILabel!{
+        didSet{
+            self.lblTittle.font = .appFont_CircularStd(type: .bold, size: 20)
+            self.lblTittle.textColor = UIColor(hex: "#151517")
+        }
+    }
+    
+    @IBOutlet weak var lblBottomTittle: UILabel!{
+        didSet{
+            self.lblBottomTittle.font = .appFont_CircularStd(type: .book, size: 13)
+            self.lblBottomTittle.textColor = UIColor(hex: "#151517").withAlphaComponent(0.6)
+        }
+    }
+    @IBOutlet weak var navView: UIView!
+    @IBOutlet weak var cnstNavViewHeight: NSLayoutConstraint!
+    @IBOutlet weak var trimmerIndicatorView: TrimmerIndicatorView!
     
     private var generator: AVAssetImageGenerator!
     //var playerView: PlayerView?
@@ -55,6 +70,7 @@ class VideoToGIFViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         loadTrimeView()
+        setupNavHeight()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -77,8 +93,7 @@ class VideoToGIFViewController: UIViewController {
     // MARK: - Private Methods -
     
     private func loadVideo() {
-        
-        if let video{
+        if let video {
             guard let url = video.videoURL else { return }
 
             self.videoView = VideoView(frame: self.playerContainerView.bounds, viewType: .default)
@@ -93,10 +108,16 @@ class VideoToGIFViewController: UIViewController {
             video.videoTime = videoTime
             video.duration = video.videoTime?.duration
             
+            // --- REVISED LOGIC ---
+            // Now using the existing helper method as you suggested.
+            if let duration = video.duration {
+                let firstPartDurationString = Int(duration).secondsToHoursMinutesSecondsInString()
+                self.trimmerIndicatorView.lblVideoDurationTime.text = firstPartDurationString
+            }
+            
             self.videoView.videoTime = videoTime
         }
     }
-    
     func loadTrimeView() {
         let currentVideo = self.video
         if let asset = currentVideo?.asset {
@@ -111,6 +132,21 @@ class VideoToGIFViewController: UIViewController {
                     self.view.layoutIfNeeded()
                 }
             }
+        }
+    }
+    
+    private func setupNavHeight(){
+        let uiType = getDeviceUIType()
+        switch uiType {
+        case .dynamicIsland:
+            print("Device has Dynamic Island")
+            self.cnstNavViewHeight.constant = NavbarHeight.withDynamicIsland.rawValue
+        case .notch:
+            print("Device has a Notch")
+            self.cnstNavViewHeight.constant = NavbarHeight.withNotch.rawValue
+        case .noNotch:
+            print("Device has no Notch")
+            self.cnstNavViewHeight.constant = NavbarHeight.withOutNotch.rawValue
         }
     }
     
@@ -227,7 +263,7 @@ extension VideoToGIFViewController: TrimmerViewDelegate {
             let duration = (trimmerView.endTime! - trimmerView.startTime!).seconds
             let partsDuration = Int(duration)
             let durationString = partsDuration.secondsToHoursMinutesSecondsInString()
-            trimmerDurationLbl.text = "\(durationString)s"
+            self.trimmerIndicatorView.trimmerDurationLbl.text = durationString
         }
     }
     
@@ -240,8 +276,44 @@ extension VideoToGIFViewController: TrimmerViewDelegate {
             let duration = (trimmerView.endTime! - trimmerView.startTime!).seconds
             let partsDuration = Int(duration)
             let durationString = partsDuration.secondsToHoursMinutesSecondsInString()
-            trimmerDurationLbl.text = "\(durationString)s"
-            //print(duration)
+            self.trimmerIndicatorView.trimmerDurationLbl.text = durationString
+        }
+    }
+    
+    func trimmerView(_ trimmer: TrimmerView,
+                     didDrag handle: TrimmerView.Handle,
+                     x: CGFloat,
+                     time: CMTime) {
+        
+        if self.trimmerIndicatorView.rularIndicatorView.alpha == 0.0 {
+            UIView.animate(withDuration: 0.15) {
+                self.trimmerIndicatorView.rularIndicatorView.alpha = 1.0
+                self.trimmerIndicatorView.lblIndicatorCurrentTime.alpha = 1.0
+            }
+        }
+        
+        let mmss = String(format: "%02d:%02d", Int(time.seconds) / 60, Int(time.seconds) % 60)
+        print("Dragging \(handle)  x=\(x)  time=\(mmss)")
+        
+        self.trimmerIndicatorView.cnstRularIndicatorViewLeading.constant = x
+        self.trimmerIndicatorView.lblIndicatorCurrentTime.text = mmss
+        
+        // লেআউট আপডেট করার জন্য এটি কল করতে পারেন
+        // self.view.layoutIfNeeded()
+    }
+
+    func trimmerView(_ trimmer: TrimmerView,
+                     didEndDragging handle: TrimmerView.Handle,
+                     x: CGFloat,
+                     time: CMTime) {
+        
+        let mmss = String(format: "%02d:%02d", Int(time.seconds) / 60, Int(time.seconds) % 60)
+        print("Ended \(handle)  x=\(x)  time=\(mmss)")
+        
+        // ✅ ড্র্যাগিং শেষে ইন্ডিকেটর আবার হাইড করে দিন
+        UIView.animate(withDuration: 0.15) {
+            self.trimmerIndicatorView.rularIndicatorView.alpha = 0.0
+            self.trimmerIndicatorView.lblIndicatorCurrentTime.alpha = 0.0
         }
     }
 }

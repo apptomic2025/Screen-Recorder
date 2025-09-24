@@ -342,12 +342,6 @@ extension Int{
         let min = (m < 10) ? "0\(m)" : "\(m)"
         let sec = (s < 10) ? "0\(s)" : "\(s)"
         return min+":"+sec
-        
-//        else if(m>0){
-//            return "\(m):\(s)"
-//        }else{
-//            return ":\(s)"
-//        }
     }
 }
 

@@ -6,6 +6,7 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -75,6 +76,44 @@
                                                     <constraint firstAttribute="width" constant="44" id="xJI-YD-qIP"/>
                                                 </constraints>
                                             </view>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3eb-bS-qty">
+                                                <rect key="frame" x="334" y="0.0" width="44" height="44"/>
+                                                <subviews>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Oei-ni-XmD">
+                                                        <rect key="frame" x="0.0" y="0.0" width="44" height="44"/>
+                                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                        <state key="normal" image="shareIcon"/>
+                                                    </button>
+                                                </subviews>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstItem="Oei-ni-XmD" firstAttribute="leading" secondItem="3eb-bS-qty" secondAttribute="leading" id="Bz3-5B-ZSc"/>
+                                                    <constraint firstAttribute="bottom" secondItem="Oei-ni-XmD" secondAttribute="bottom" id="SCp-zn-zAo"/>
+                                                    <constraint firstAttribute="height" constant="44" id="hok-lS-O5W"/>
+                                                    <constraint firstAttribute="trailing" secondItem="Oei-ni-XmD" secondAttribute="trailing" id="wyV-tJ-KMi"/>
+                                                    <constraint firstItem="Oei-ni-XmD" firstAttribute="top" secondItem="3eb-bS-qty" secondAttribute="top" id="yRa-5a-Rj6"/>
+                                                    <constraint firstAttribute="width" constant="44" id="yRr-vg-QWh"/>
+                                                </constraints>
+                                            </view>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9DN-q7-YbR">
+                                                <rect key="frame" x="288" y="0.0" width="44" height="44"/>
+                                                <subviews>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tAt-BT-eED">
+                                                        <rect key="frame" x="0.0" y="0.0" width="44" height="44"/>
+                                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                        <state key="normal" image="gotoEditIcon"/>
+                                                    </button>
+                                                </subviews>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="trailing" secondItem="tAt-BT-eED" secondAttribute="trailing" id="Ed2-Vf-uKQ"/>
+                                                    <constraint firstAttribute="height" constant="44" id="Hma-fc-gkc"/>
+                                                    <constraint firstAttribute="bottom" secondItem="tAt-BT-eED" secondAttribute="bottom" id="J3e-6W-igE"/>
+                                                    <constraint firstAttribute="width" constant="44" id="L5u-aH-u2j"/>
+                                                    <constraint firstItem="tAt-BT-eED" firstAttribute="top" secondItem="9DN-q7-YbR" secondAttribute="top" id="dXY-rJ-fAC"/>
+                                                    <constraint firstItem="tAt-BT-eED" firstAttribute="leading" secondItem="9DN-q7-YbR" secondAttribute="leading" id="f82-il-odS"/>
+                                                </constraints>
+                                            </view>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Face Cam" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="56q-yy-Tca">
                                                 <rect key="frame" x="157" y="11.333333333333337" width="79" height="21.666666666666671"/>
                                                 <fontDescription key="fontDescription" name="CircularStd-Black" family="Circular Std" pointSize="17"/>
@@ -84,11 +123,15 @@
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
+                                            <constraint firstItem="3eb-bS-qty" firstAttribute="centerX" secondItem="cqW-jK-nbY" secondAttribute="centerX" id="2Um-pA-abF"/>
+                                            <constraint firstItem="3eb-bS-qty" firstAttribute="centerY" secondItem="cqW-jK-nbY" secondAttribute="centerY" id="4TL-x5-Z14"/>
                                             <constraint firstItem="56q-yy-Tca" firstAttribute="centerY" secondItem="D9h-Rn-bdj" secondAttribute="centerY" id="6b4-Xg-vZG"/>
                                             <constraint firstItem="cqW-jK-nbY" firstAttribute="top" secondItem="D9h-Rn-bdj" secondAttribute="top" id="D7c-x6-hR7"/>
                                             <constraint firstItem="I6G-YS-72T" firstAttribute="leading" secondItem="D9h-Rn-bdj" secondAttribute="leading" constant="15" id="Jep-Vf-wtT"/>
                                             <constraint firstItem="I6G-YS-72T" firstAttribute="top" secondItem="D9h-Rn-bdj" secondAttribute="top" id="QMi-3o-2Bx"/>
                                             <constraint firstItem="56q-yy-Tca" firstAttribute="centerX" secondItem="D9h-Rn-bdj" secondAttribute="centerX" id="Xop-Db-btx"/>
+                                            <constraint firstItem="cqW-jK-nbY" firstAttribute="leading" secondItem="9DN-q7-YbR" secondAttribute="trailing" constant="2" id="Z7h-jH-cau"/>
+                                            <constraint firstItem="9DN-q7-YbR" firstAttribute="centerY" secondItem="D9h-Rn-bdj" secondAttribute="centerY" id="hJ8-Po-EpI"/>
                                             <constraint firstAttribute="height" constant="44" id="ho9-n2-Z7Z"/>
                                             <constraint firstAttribute="trailing" secondItem="cqW-jK-nbY" secondAttribute="trailing" constant="15" id="m5H-wr-tED"/>
                                         </constraints>
@@ -510,11 +553,11 @@
                             <constraint firstItem="ZNV-BO-7LO" firstAttribute="trailing" secondItem="h9c-Vp-s5e" secondAttribute="trailing" id="9dd-7p-cRw"/>
                             <constraint firstItem="evu-rY-HVv" firstAttribute="leading" secondItem="8jx-Zn-KKq" secondAttribute="leading" id="AeT-fR-7QE"/>
                             <constraint firstItem="L0D-mI-mzC" firstAttribute="trailing" secondItem="9gb-dW-BED" secondAttribute="trailing" id="CMX-FD-XPY"/>
+                            <constraint firstAttribute="bottom" secondItem="L0D-mI-mzC" secondAttribute="bottom" id="Fbe-3g-Dyw"/>
                             <constraint firstItem="bLJ-gS-hao" firstAttribute="centerY" secondItem="h9c-Vp-s5e" secondAttribute="centerY" id="OJM-gB-IKE"/>
                             <constraint firstItem="bLJ-gS-hao" firstAttribute="trailing" secondItem="h9c-Vp-s5e" secondAttribute="trailing" constant="-30" id="PoL-24-ItC"/>
                             <constraint firstItem="oWO-rg-8C8" firstAttribute="leading" secondItem="9gb-dW-BED" secondAttribute="leading" id="ROR-OQ-6xo"/>
                             <constraint firstItem="CPW-IU-Wg6" firstAttribute="leading" secondItem="9gb-dW-BED" secondAttribute="leading" id="VpC-MX-RaO"/>
-                            <constraint firstItem="CPW-IU-Wg6" firstAttribute="top" secondItem="L0D-mI-mzC" secondAttribute="bottom" id="bey-lo-Nb1"/>
                             <constraint firstItem="CPW-IU-Wg6" firstAttribute="trailing" secondItem="9gb-dW-BED" secondAttribute="trailing" id="fTn-Va-MrN"/>
                             <constraint firstItem="h9c-Vp-s5e" firstAttribute="leading" secondItem="9gb-dW-BED" secondAttribute="leading" id="g7T-c6-6pJ"/>
                             <constraint firstItem="oWO-rg-8C8" firstAttribute="top" secondItem="h9c-Vp-s5e" secondAttribute="bottom" constant="17" id="gVo-bf-Fgd"/>
@@ -531,22 +574,27 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="btnGotoEditor" destination="tAt-BT-eED" id="f3q-cw-cD0"/>
+                        <outlet property="btnGotoShare" destination="Oei-ni-XmD" id="Lea-dX-Fyc"/>
                         <outlet property="buttonBgView" destination="bLJ-gS-hao" id="JZn-qL-vSZ"/>
                         <outlet property="cameraPositionImage" destination="lz2-CL-lkM" id="0NP-7S-HtP"/>
                         <outlet property="cameraView" destination="gXH-lh-TUd" id="k2k-Px-c2i"/>
                         <outlet property="cnstNavViewHeight" destination="KzE-6a-z2L" id="nRu-uW-Ki4"/>
+                        <outlet property="editorBtnView" destination="9DN-q7-YbR" id="yH2-LR-gwH"/>
                         <outlet property="lblFaceCam" destination="56q-yy-Tca" id="Mwm-vT-PUt"/>
                         <outlet property="lblRecordingTime" destination="Qf3-WY-jbU" id="Wno-El-AiN"/>
                         <outlet property="navView" destination="evu-rY-HVv" id="Ir2-SL-bCC"/>
                         <outlet property="playPauseButton" destination="9ip-1x-HQZ" id="csI-L7-JVJ"/>
                         <outlet property="playerContainerView" destination="h9c-Vp-s5e" id="0Ch-0u-GjW"/>
                         <outlet property="recordButtonBg" destination="PwD-D3-Abp" id="fN9-TW-jed"/>
+                        <outlet property="shareBtnView" destination="3eb-bS-qty" id="dcc-rF-KqG"/>
                         <outlet property="timeLbl" destination="Msf-AC-MXG" id="XSY-hd-Rcw"/>
                         <outlet property="timeLblWidthConstraint" destination="4o3-PG-br9" id="0MN-Hc-jW6"/>
                         <outlet property="timeSacleContentView" destination="Tjg-9Z-3nD" id="l1D-Jo-4UP"/>
                         <outlet property="timeSacleContentViewWidthConstraint" destination="cSR-88-g87" id="icL-XO-1yc"/>
                         <outlet property="timeSacleScrollView" destination="7V5-Hf-8EK" id="wYK-lZ-FBJ"/>
                         <outlet property="toggleImageView" destination="hfE-GU-McT" id="Th5-9Q-e7J"/>
+                        <outlet property="tutorialBtnView" destination="cqW-jK-nbY" id="dhJ-bQ-x2x"/>
                         <outlet property="videoSplitView" destination="gV3-AI-o0R" id="5ZI-57-YFA"/>
                         <outlet property="volumeContainerView" destination="CPW-IU-Wg6" id="yih-Ke-T1T"/>
                         <outlet property="volumeLabel" destination="kqb-Gn-xba" id="xao-Zz-alX"/>
@@ -558,13 +606,30 @@
             </objects>
             <point key="canvasLocation" x="-11.450381679389313" y="3.5211267605633805"/>
         </scene>
+        <!--View Controller-->
+        <scene sceneID="Sx9-6x-SAb">
+            <objects>
+                <viewController id="s2H-dT-nsQ" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Sx6-NF-zA2">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="pKt-Kh-WGZ"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="HZa-RT-s1x" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1062" y="4"/>
+        </scene>
     </scenes>
     <resources>
         <image name="backArrow" width="34" height="34"/>
-        <image name="cancel" width="36" height="36"/>
-        <image name="done" width="36" height="36"/>
+        <image name="cancel" width="28" height="28"/>
+        <image name="done" width="28" height="28"/>
         <image name="drop" width="49" height="24"/>
+        <image name="gotoEditIcon" width="34" height="34"/>
         <image name="position1" width="63" height="60"/>
+        <image name="shareIcon" width="34" height="34"/>
         <image name="toggle1" width="20" height="20"/>
         <image name="tutorialIcon" width="34" height="34"/>
         <image name="videoPlayIcon" width="40" height="40"/>
@@ -579,5 +644,8 @@
         <namedColor name="themeColor">
             <color red="0.32899999618530273" green="0.3059999942779541" blue="0.9179999828338623" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
         </namedColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
     </resources>
 </document>

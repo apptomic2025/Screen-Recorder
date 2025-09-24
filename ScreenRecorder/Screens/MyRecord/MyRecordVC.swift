@@ -13,9 +13,6 @@ import AVKit
 
 class MyRecordVC: UIViewController {
 
-    enum SelectToolType: Int {
-        case faceCam, commentary, gif, edit, voiceReocrd, photoToVideo,videoToPhoto, videoToAudio, trim, compress, speed, crop, extractAudio, none
-    }
 
     let share = DirectoryManager.shared
     

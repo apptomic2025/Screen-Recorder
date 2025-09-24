@@ -21,9 +21,6 @@ class HomeViewController: UIViewController {
     var observations: [NSObjectProtocol] = []
     private lazy var notificationCenter: NotificationCenter = .default
     var session: AVCaptureSession?
-    enum SelectToolType: Int {
-        case faceCam, commentary, gif, edit, voiceReocrd, photoToVideo,videoToPhoto, videoToAudio, trim, compress, speed, crop, extractAudio, none
-    }
 
     var exportVC: ExportSettingsVC?
     private var selection = [String: PHPickerResult]()
@@ -38,7 +35,6 @@ class HomeViewController: UIViewController {
     let gifManager = GifManager.shared
     var selectToolType: SelectToolType = .none
 
-    //MARK: -> Demo Model Set===============
     var recordingSettings: RecordingSettingsModel = RecordingSettingsModel(resolution: "720p", fileSize: "12Mbps", frameRate: "60fps", rotation: "Auto")
     
     //var dummyDataCount: Int = 20
@@ -364,118 +360,6 @@ extension HomeViewController{
     }
 
     
-//    func CollectionViewDidSelectAction(videoToolAction: VideoToolAction) {
-//        switch videoToolAction {
-//            
-//        case .liveBroadcast:
-//            print("Live Broadcast selected")
-//            let vc = loadVCfromStoryBoard(name: "Broadcast", identifier: "BroadCastVC") as! BroadCastVC
-//            self.navigationController?.pushViewController(vc, animated: true)
-//            
-//        case .faceCam:
-//            print("Face Cam selected")
-//            selectToolType = .faceCam
-//            let actionsheet = UIAlertController(title: "Select video source", message: "React to videos from Screen Recorder Camera Roll or YouTube", preferredStyle: .actionSheet)
-//            actionsheet.overrideUserInterfaceStyle = .light
-//            
-//            actionsheet.addAction(UIAlertAction(title: "My Recordings", style: .default , handler:{ (UIAlertAction)in
-//                self.gotToMyVideos(isComeFaceCam: true)
-//            }))
-//                
-//            actionsheet.addAction(UIAlertAction(title: "Camera Roll", style: .default , handler:{ (UIAlertAction)in
-//                self.selectToolType = .faceCam
-//                self.presentPicker()
-//            }))
-//
-//            actionsheet.addAction(UIAlertAction(title: "React to Youtube", style: .default , handler:{ (UIAlertAction)in
-//                self.goToSearchVideoVC()
-//            }))
-//            
-//            actionsheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler:{ (UIAlertAction)in
-//                    print("User click Dismiss button")
-//            }))
-//            self.present(actionsheet, animated: true)
-//            
-//        case .commentary:
-//            print("Commentary selected")
-//            let actionsheet = UIAlertController(title: "Select video source", message: "Add commentary to videos from Screen Recorder or Camera Roll", preferredStyle: .actionSheet)
-//            
-//            actionsheet.addAction(UIAlertAction(title: "My Recordings", style: .default , handler:{ (UIAlertAction)in
-//                self.gotToMyVideos(isComeCommentary: true)
-//            }))
-//                
-//            actionsheet.addAction(UIAlertAction(title: "Camera Roll", style: .default , handler:{ (UIAlertAction)in
-//                self.selectToolType = .commentary
-//                self.presentPicker()
-//            }))
-//            
-//            actionsheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler:{ (UIAlertAction)in
-//                    print("User click Dismiss button")
-//            }))
-//            self.present(actionsheet, animated: true)
-//            
-//        case .gifMaker:
-//            print("GIF Maker selected")
-//            let actionsheet = UIAlertController(title: "Video to GIF", message: "Select a video source and react to videos from previous Recordings, Gallery or Youtube", preferredStyle: .actionSheet)
-//            
-//            actionsheet.addAction(UIAlertAction(title: "Gallery", style: .default , handler:{ (UIAlertAction)in
-//                self.selectToolType = .gif
-//                self.presentPicker()
-//            }))
-//                
-//            actionsheet.addAction(UIAlertAction(title: "Recordings", style: .default , handler:{ (UIAlertAction)in
-//        
-//                if let vc = loadVCfromStoryBoard(name: "MyRecord", identifier: "MyRecordVC") as? MyRecordVC{
-//                    vc.selectToolType = .gif
-//                    vc.modalPresentationStyle = .fullScreen
-//                    self.navigationController?.pushViewController(vc, animated: true)
-//                }
-//
-//            }))
-//            
-//            actionsheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler:{ (UIAlertAction)in
-//                    print("User click Dismiss button")
-//            }))
-//            self.present(actionsheet, animated: true)
-//            
-//        case .editVideo:
-//            print("Edit Video selected")
-//            selectToolType = .edit
-//            self.presentPicker()
-//        case .voiceRecorder:
-//            print("Voice Recorder selected")
-//            self.gotoVoiceRecordVC()
-//        case .videoToPhoto:
-//            print("Video to Photo selected")
-//            selectToolType = .videoToPhoto
-//            presentPHpicker(selectToolType: .videoToPhoto)
-//        case .videoToAudio:
-//            print("Video to Audio selected")
-//            selectToolType = .extractAudio
-//            self.goToExtractMusicVC()
-//        case .videoTrimmer:
-//            print("Video Trimmer selected")
-//            self.selectToolType = .trim
-//            presentPHpicker(selectToolType: .trim)
-//        case .videoCompress:
-//            print("Video Compress selected")
-//            selectToolType = .compress
-//            presentPHpicker(selectToolType: .compress)
-//        case .photoToVideo:
-//            print("Photo to Video selected")
-//            selectToolType = .photoToVideo
-//            presentPicker(type: true)
-//        case .videoSpeed:
-//            print("Video Speed selected")
-//            selectToolType = .speed
-//            presentPHpicker(selectToolType: .speed)
-//        case .cropVideo:
-//            print("Crop Video selected")
-//            selectToolType = .crop
-//            presentPHpicker(selectToolType: .crop)
-//        }
-//    }
-    
     @objc func btnToolsSeeAllAction(){
         
                 let vc = loadVCfromStoryBoard(name: "VideoTools", identifier: "VideoToolsViewController") as! VideoToolsViewController
@@ -703,96 +587,97 @@ extension HomeViewController {
     }
     
     func FaceCamTapped() {
-        
         print("Face Cam selected")
         selectToolType = .faceCam
-        
-        let storyboard = UIStoryboard(name: "VideoSource", bundle: nil)
-            guard let selectionVC = storyboard.instantiateViewController(withIdentifier: "VideoSourceSelectionViewController") as? VideoSourceSelectionViewController else {
-                print("Could not load VideoSourceSelectionViewController from storyboard.")
-                return
+
+        let selectionVC = VideoSourceSelectionViewController.instantiate(
+            options: [.cameraRoll, .myRecordings, .youTube],
+            title: "Face Cam",
+            subtitle: "Select a video source and start editing",
+            onSelectCameraRoll: { [weak self] in
+                self?.selectToolType = .faceCam
+                self?.presentPicker()
+            },
+            onSelectMyRecordings: { [weak self] in
+                self?.gotToMyVideos()
+            },
+            onSelectYouTube: { [weak self] in
+                self?.goToSearchVideoVC()
             }
-        
-        selectionVC.onSelectMyRecordings = { [weak self] in
-            self?.gotToMyVideos(isComeFaceCam: true)
-        }
-        
-        selectionVC.onSelectCameraRoll = { [weak self] in
-            self?.selectToolType = .faceCam
-            self?.presentPicker()
-        }
-        
-        selectionVC.onSelectYouTube = { [weak self] in
-            self?.goToSearchVideoVC()
-        }
+        )
 
         if let sheet = selectionVC.sheetPresentationController {
-            if #available(iOS 16.0, *) {
-                let customDetent = UISheetPresentationController.Detent.custom(identifier: .init("customHeight")) { context in
-                    return 330
-                }
-                sheet.detents = [customDetent]
-            } else {
-                sheet.detents = [.medium()]
-            }
             sheet.prefersGrabberVisible = true
         }
-        
+
+        self.present(selectionVC, animated: true)
+    }
+
+    
+    func commentryTapped() {
+        self.selectToolType = .commentary
+        let selectionVC = VideoSourceSelectionViewController.instantiate(
+            options: [.cameraRoll, .myRecordings],
+            title: "Commentary",
+            subtitle: "Select a video source and start editing",
+            onSelectCameraRoll: { [weak self] in
+                self?.presentPicker()
+            },
+            onSelectMyRecordings: { [weak self] in
+                self?.gotToMyVideos()
+            }
+        )
+
+        if let sheet = selectionVC.sheetPresentationController {
+            sheet.prefersGrabberVisible = true
+        }
+
         self.present(selectionVC, animated: true)
     }
     
-    func commentryTapped() {
-        print("Commentry Tapped")
-        
-        let actionsheet = UIAlertController(title: "Select video source", message: "Add commentary to videos from Screen Recorder or Camera Roll", preferredStyle: .actionSheet)
-        
-        actionsheet.addAction(UIAlertAction(title: "My Recordings", style: .default , handler:{ (UIAlertAction)in
-            self.gotToMyVideos(isComeCommentary: true)
-        }))
-            
-        actionsheet.addAction(UIAlertAction(title: "Camera Roll", style: .default , handler:{ (UIAlertAction)in
-            self.selectToolType = .commentary
-            self.presentPicker()
-        }))
-        
-        actionsheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler:{ (UIAlertAction)in
-                print("User click Dismiss button")
-        }))
-        self.present(actionsheet, animated: true)
-    }
-    
     func videoToGifTapped() {
-        print("Vieo To Gif Tapped")
-        
-        let actionsheet = UIAlertController(title: "Video to GIF", message: "Select a video source and react to videos from previous Recordings, Gallery or Youtube", preferredStyle: .actionSheet)
-        
-        actionsheet.addAction(UIAlertAction(title: "Gallery", style: .default , handler:{ (UIAlertAction)in
-            self.selectToolType = .gif
-            self.presentPicker()
-        }))
-            
-        actionsheet.addAction(UIAlertAction(title: "Recordings", style: .default , handler:{ (UIAlertAction)in
-    
-            if let vc = loadVCfromStoryBoard(name: "MyRecord", identifier: "MyRecordVC") as? MyRecordVC{
-                vc.selectToolType = .gif
-                vc.modalPresentationStyle = .fullScreen
-                self.navigationController?.pushViewController(vc, animated: true)
+        self.selectToolType = .gif
+        let selectionVC = VideoSourceSelectionViewController.instantiate(
+            options: [.cameraRoll, .myRecordings],
+            title: "Video to GIF",
+            subtitle: "Select a video source and start editing",
+            onSelectCameraRoll: { [weak self] in
+                self?.presentPicker()
+            },
+            onSelectMyRecordings: { [weak self] in
+                self?.gotToMyVideos()
             }
+        )
 
-        }))
-        
-        actionsheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler:{ (UIAlertAction)in
-                print("User click Dismiss button")
-        }))
-        self.present(actionsheet, animated: true)
+        if let sheet = selectionVC.sheetPresentationController {
+            sheet.prefersGrabberVisible = true
+        }
+
+        self.present(selectionVC, animated: true)
         
     }
     
     func videoEditTapped() {
-        print("Video Edit Tapped")
-        selectToolType = .edit
-        self.presentPicker()
+        self.selectToolType = .edit
+        let selectionVC = VideoSourceSelectionViewController.instantiate(
+            options: [.cameraRoll, .myRecordings],
+            title: "Video Edit",
+            subtitle: "Select a video source and start editing",
+            onSelectCameraRoll: { [weak self] in
+                self?.presentPicker()
+            },
+            onSelectMyRecordings: { [weak self] in
+                self?.gotToMyVideos()
+            }
+        )
+
+        if let sheet = selectionVC.sheetPresentationController {
+            sheet.prefersGrabberVisible = true
+        }
+
+        self.present(selectionVC, animated: true)
     }
+
     
     func recordingsHistoryTapped(_ indexPath: IndexPath) {
         print("\(indexPath.row) no. Record History Tapped")
@@ -847,9 +732,6 @@ extension HomeViewController {
                         }))
                     self.present(actionsheet, animated: true)
                 
-            
-           
-        
     }
 }
 
@@ -1054,11 +936,11 @@ private extension HomeViewController {
         }
     }
     
-    func gotToMyVideos(isComeFaceCam: Bool? = false, isComeCommentary: Bool? = false) {
+    func gotToMyVideos() {
         
         if let vc = loadVCfromStoryBoard(name: "MyRecord", identifier: "MyRecordVC") as? MyRecordVC{
             vc.modalPresentationStyle = .fullScreen
-            vc.selectToolType = .faceCam
+            vc.selectToolType = self.selectToolType
             DispatchQueue.main.async{
                 self.navigationController?.pushViewController(vc, animated: true)
             }

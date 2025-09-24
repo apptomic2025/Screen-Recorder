@@ -194,11 +194,15 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="cnstStackViewHeight" destination="XOc-C2-Yu5" id="6Ql-q1-szh"/>
                         <outlet property="lblCameraRoll" destination="tHp-sz-f95" id="Igg-ar-Mi6"/>
                         <outlet property="lblMyRecordings" destination="WU2-tl-Uh8" id="0uX-ug-gVh"/>
                         <outlet property="lblSubTitle" destination="uWT-3v-5pO" id="jCE-h2-C7M"/>
                         <outlet property="lblTitle" destination="pbU-6K-f4H" id="fuC-iV-oVp"/>
                         <outlet property="lblYouTube" destination="kgx-Df-Hig" id="hai-20-qon"/>
+                        <outlet property="rowCameraRollView" destination="6Yz-ca-ChR" id="IQP-69-WkW"/>
+                        <outlet property="rowMyRecordingsView" destination="hWq-ax-NWX" id="O3l-u1-WK9"/>
+                        <outlet property="rowYouTubeView" destination="d0u-Nc-yVr" id="msJ-0a-Fq2"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

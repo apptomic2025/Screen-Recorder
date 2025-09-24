@@ -10,29 +10,6 @@ import AVKit
 import AVFoundation
 import PhotosUI
 
-
-
-//
-//extension EditorViewController: GADFullScreenContentDelegate{
-//    
-//    func adWillPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
-//      print("Ad will present full screen content.")
-//    }
-//
-//    func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error)
-//    {
-//      print("Ad failed to present full screen content with error \(error.localizedDescription).")
-//        self.loadInterstitial()
-//        self.gotoShareVC()
-//    }
-//
-//    func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
-//      print("Ad did dismiss full screen content.")
-//        self.loadInterstitial()
-//        self.gotoShareVC()
-//    }
-//    
-//}
 let scrollHeight:CGFloat = 44
 let midleFlagborderHeight = 60
 
@@ -44,26 +21,8 @@ class EditorVC: UIViewController {
     let fullScreenAdID = "ca-app-pub-3940256099942544/4411468910"
 #endif
     
-    /// The interstitial ad.
-   // var interstitial: GAMInterstitialAd?
-    
-//    fileprivate func loadInterstitial() {
-//      GAMInterstitialAd.load(
-//        withAdManagerAdUnitID: fullScreenAdID,
-//        request: GAMRequest()
-//      ) { (ad, error) in
-//        if let error = error {
-//          print("Failed to load interstitial ad with error: \(error.localizedDescription)")
-//          return
-//        }
-//        self.interstitial = ad
-//        self.interstitial?.fullScreenContentDelegate = self
-//      }
-//    }
-    
     private let cropPickerView: CropPickerView = {
         let cropPickerView = CropPickerView()
-       // cropPickerView.translatesAutoresizingMaskIntoConstraints = false
         cropPickerView.backgroundColor = .clear
         cropPickerView.imageView.backgroundColor = .clear
         return cropPickerView
@@ -75,23 +34,19 @@ class EditorVC: UIViewController {
         return assetImgGenerate
     }
     
-    let bottomConstant:CGFloat = 194.0
+    let bottomConstant:CGFloat = 245
     let bottomConstantFilter:CGFloat = 220.0
     
-    @IBOutlet weak var topNavBarView: UIView!
     @IBOutlet weak var exportView: UIView!{
         didSet{
             exportView.alpha = 0.0
         }
     }
+
     @IBOutlet weak var trimmerView: TrimmerView!
     @IBOutlet weak var trimmerContainerView: UIView!
     @IBOutlet weak var trimViewBottomConstraint: NSLayoutConstraint!
-    @IBOutlet weak var trimmerDurationLbl: UILabel!{
-        didSet{
-            trimmerDurationLbl.font = UIFont.monospacedSystemFont(ofSize: 12, weight: .medium)
-        }
-    }
+  
     
     @IBOutlet weak var croperMainContainerView: UIView!{
         didSet{
@@ -101,15 +56,11 @@ class EditorVC: UIViewController {
     }
     @IBOutlet weak var cropContainerView: UIView!
     @IBOutlet weak var cropBottomConstraint: NSLayoutConstraint!
-    
     @IBOutlet weak var filterContainerView: UIView!
     @IBOutlet weak var filterView: UIView!
     @IBOutlet weak var filterBottomConstraint: NSLayoutConstraint!
-    
     @IBOutlet weak var editorCollectionView: UICollectionView!
-    
     @IBOutlet weak var editorView: UIView!
-    
     @IBOutlet weak var speedContainerView: UIView!
     @IBOutlet weak var speedViewBottomConstraint: NSLayoutConstraint!
     @IBOutlet weak var speedValueLabel: UILabel!{
@@ -125,14 +76,6 @@ class EditorVC: UIViewController {
             speedSlider.addTarget(self, action: #selector(speedValueChanged(slider:event:)), for: .valueChanged)
         }
     }
-    
-    @IBOutlet weak var fakeView: UIView!{
-        didSet{
-            fakeView.alpha = 0.0
-            fakeView.isHidden = true
-        }
-    }
-
     
     @IBOutlet weak var volumeContainerView: UIView!
     @IBOutlet weak var volumeViewBottomConstraint: NSLayoutConstraint!
@@ -150,6 +93,59 @@ class EditorVC: UIViewController {
         }
     }
     
+    @IBOutlet weak var lblTittle: UILabel!{
+        didSet{
+            self.lblTittle.font = .appFont_CircularStd(type: .bold, size: 20)
+            self.lblTittle.textColor = UIColor(hex: "#151517")
+        }
+    }
+    
+    @IBOutlet weak var lblBottomTittle: UILabel!{
+        didSet{
+            self.lblBottomTittle.font = .appFont_CircularStd(type: .book, size: 13)
+            self.lblBottomTittle.textColor = UIColor(hex: "#151517").withAlphaComponent(0.6)
+        }
+    }
+
+    
+    @IBOutlet weak var navView: UIView!
+    @IBOutlet weak var cnstNavViewHeight: NSLayoutConstraint!
+    @IBOutlet weak var btnCross: UIButton!
+    @IBOutlet weak var btnExport: UIButton!
+    @IBOutlet weak var timeSacleScrollView: UIScrollView!
+    @IBOutlet weak var timeSacleContentView: UIView!
+    @IBOutlet weak var timeSacleContentViewWidthConstraint: NSLayoutConstraint!
+    @IBOutlet weak var timeLbl: UILabel!{
+        didSet{
+            timeLbl.font = UIFont.monospacedSystemFont(ofSize: 12, weight: .medium)
+        }
+    }
+    @IBOutlet weak var timeLblWidthConstraint: NSLayoutConstraint!
+    @IBOutlet weak var playerContainerView: UIView!{
+        didSet{
+        }
+    }
+    @IBOutlet weak var videoSplitView: MusicView!
+    @IBOutlet weak var playPauseButton: UIButton!{
+        didSet{
+            playPauseButton.addTarget(self, action: #selector(playButtonAction), for: .touchUpInside)
+        }
+    }
+    @IBOutlet weak var trimmerIndicatorView: TrimmerIndicatorView!
+    
+    //var playerView: PlayerView?
+    var exportVC: ExportSettingsVC?
+    var rotate: Double = 0
+    var isComeFromFaceCam: Bool = false
+    var isComeFromCommentaruy: Bool = false
+    var isComeFromPreviewVC: Bool = false
+    private var isPlaying = false
+    var playerStatus: PlayerStatus = .stop
+    var video: Video?
+    
+    var actualRect: CGRect?
+    var isFirstTimeLoaded = false
+    
     var timescalcolor: UIColor {
         return UIColor(hex: "#B4B4B4")
     }
@@ -159,103 +155,39 @@ class EditorVC: UIViewController {
         view.layer.cornerRadius = 10
         return view
     }()
-    
-    @IBOutlet weak var btnCross: UIButton!
-    @IBOutlet weak var btnExport: UIButton!
-    
-    @IBOutlet weak var timeSacleScrollView: UIScrollView!
-    @IBOutlet weak var timeSacleContentView: UIView!
-    @IBOutlet weak var timeSacleContentViewWidthConstraint: NSLayoutConstraint!
-    
-    var playerStatus: PlayerStatus = .stop
-    var video: Video?
-    var isFirstTimeLoaded = false
-    
-    @IBOutlet weak var timeLbl: UILabel!{
-        didSet{
-            timeLbl.font = UIFont.monospacedSystemFont(ofSize: 12, weight: .medium)
-        }
-    }
-    @IBOutlet weak var timeLblWidthConstraint: NSLayoutConstraint!
-    
-    @IBOutlet weak var playerContainerView: UIView!{
-        didSet{
-            //self.playerContainerView.backgroundColor = .clear
-        }
-    }
-    @IBOutlet weak var videoSplitView: MusicView!
-    
-    @IBOutlet weak var playPauseButton: UIButton!{
-        didSet{
-            playPauseButton.addTarget(self, action: #selector(playButtonAction), for: .touchUpInside)
-        }
-    }
-    
-    @IBOutlet weak var lblAddStickers: UILabel!{
-        didSet{
-            self.lblAddStickers.font = .appFont_CircularStd(type: .bold, size: 14)
-            self.lblAddStickers.textColor = UIColor(hex: "#434343")
-        }
-    }
-    
-    @IBOutlet weak var lblAddMusic: UILabel!{
-        didSet{
-            self.lblAddMusic.font = .appFont_CircularStd(type: .bold, size: 14)
-            self.lblAddMusic.textColor = .white
-        }
-    }
-    
-    //var playerView: PlayerView?
-    var exportVC: ExportSettingsVC?
-    
-    var rotate: Double = 0
-    
-    var isComeFromFaceCam: Bool = false
-    var isComeFromCommentaruy: Bool = false
-    var isComeFromPreviewVC: Bool = false
-    
     //NEW VIDEO VIEW
     private var videoView: VideoView = {
         let videoView = VideoView(frame: CGRect(x: 0, y: 0, width: 100, height: 100), viewType: .default)
-        //videoView.translatesAutoresizingMaskIntoConstraints = false
         return videoView
     }()
-    private var isPlaying = false
+    
+
+    var videoRect: CGRect {
+        if self.rotate == 0 || self.rotate == 2 {
+            return actualRect ?? .zero
+            //self.playerLayer.videoRect
+        } else if self.rotate == 1 || self.rotate == 3 {
+            guard let actualRect = actualRect else { return .zero}
+            return CGRect(x: actualRect.origin.y, y: actualRect.origin.x, width: actualRect.size.height, height: actualRect.size.width)
+        } else {
+            return .zero
+        }
+    }
+    
     
     // MARK: - LIFE CYCLE
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        //self.loadInterstitial()
-        
         trimmerView.delegate = self
-        
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         mickSetup(.playback)
-        
         NotificationCenter.default.addObserver(self, selector: #selector(self.backToHome(_:)), name: NSNotification.Name(rawValue: "backToHome"), object: nil)
-
-//        if isFirstTimeLoaded {
-//            loadVideo()
-//        }
     }
     
-    var isLoaded = false
-    
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        
-        if !isLoaded{
-            isLoaded = true
-            
-        }
-    }
     @objc func backToHome(_ notification: NSNotification) {
         self.navigationController?.popViewController(animated: true)
     }
@@ -267,24 +199,21 @@ class EditorVC: UIViewController {
         }
     }
     
-    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
         self.videoView.invalidate()
         
     }
-        
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
         if !isFirstTimeLoaded{
-            
             isFirstTimeLoaded = true
-            
             loadVideo()
             setupCollectionView()
             setupContainerViewUI()
+            setupNavHeight()
             if let exportVC = loadVCfromStoryBoard(name: "Export", identifier: "ExportSettingsVC") as? ExportSettingsVC{
                 self.exportVC = exportVC
                 self.exportVC?.delegate = self
@@ -292,8 +221,10 @@ class EditorVC: UIViewController {
                 
                 setupContainerViewUI()
             }
+            
         }
     }
+    
     deinit{
         debugPrint("deinit of preview vc")
     }
@@ -326,10 +257,25 @@ class EditorVC: UIViewController {
         }
     }
     
+    private func setupNavHeight(){
+        let uiType = getDeviceUIType()
+        switch uiType {
+        case .dynamicIsland:
+            print("Device has Dynamic Island")
+            self.cnstNavViewHeight.constant = NavbarHeight.withDynamicIsland.rawValue
+        case .notch:
+            print("Device has a Notch")
+            self.cnstNavViewHeight.constant = NavbarHeight.withNotch.rawValue
+        case .noNotch:
+            print("Device has no Notch")
+            self.cnstNavViewHeight.constant = NavbarHeight.withOutNotch.rawValue
+        }
+        
+    }
+    
     @objc func speedValueChanged(slider: UISlider, event: UIEvent) {
         DispatchQueue.main.async { [self] in
-            //debugPrint(slider.value)
-            //speed 0.1x to 12x
+            
             if slider.value > 5.0{
                 let extra = slider.value - 5.0
                 var currentValue = (extra * 12)/5
@@ -380,7 +326,7 @@ class EditorVC: UIViewController {
         guard let startTime = self.video?.videoTime?.startTime, let endTime = self.video?.videoTime?.endTime else { return }
         
         let duration = endTime - startTime
-
+        
         var videoConverterCrop: ConverterCrop?
         
         let size = self.videoRect.size
@@ -406,69 +352,11 @@ class EditorVC: UIViewController {
         
         return
         
-//        videoConverter.convert(ConverterOption(
-//            trimRange: CMTimeRange(start: startTime, duration: duration),
-//            convertCrop: videoConverterCrop,
-//            rotate: CGFloat(.pi/2 * self.rotate),
-//            quality: nil,
-//            isMute: false), progress: { [weak self] (progress) in
-//               debugPrint(progress)
-//            }, completion: { [weak self] (url, error) in
-//            if let error = error {
-//                let alertController = UIAlertController(title: nil, message: error.localizedDescription, preferredStyle: .alert)
-//                alertController.addAction(UIAlertAction(title: "Confirm", style: .default, handler: nil))
-//                self?.present(alertController, animated: true)
-//            } else {
-//
-//                DispatchQueue.main.async {
-//                    let videoURL = url
-//                    let player = AVPlayer(url: videoURL!)
-//                    let playerViewController = AVPlayerViewController()
-//                    playerViewController.player = player
-//                    self?.present(playerViewController, animated: true) {
-//                        playerViewController.player!.play()
-//                    }
-//                }
-//            }
-//        })
-        
-//        return
-//        guard var video = self.video, let asset = video.asset else { return }
-//
-//        var presetVideoComposition: AVMutableVideoComposition = AVMutableVideoComposition()
-//            presetVideoComposition = AVMutableVideoComposition(asset: asset,  applyingCIFiltersWithHandler: {
-//                (request) in
-//                let source = request.sourceImage.clampedToExtent()
-//                let output = source.cropped(to: request.sourceImage.extent)
-//                request.finish(with: output, context: nil)
-//            })
-//
-//
-//        let videoComposition: AVVideoComposition = self.videoView.cropScaleComposition ?? presetVideoComposition
-//
-//        video.cropRect = self.videoView.cRect
-//
-//        if let shareVC = ShareViewController.customInit(video: video, videoComposition: videoComposition){
-//            shareVC.exportType = .normal
-//            shareVC.modalPresentationStyle = .fullScreen
-//            //shareVC.delegate = self
-//            self.navigationController?.present(shareVC, animated: true)
-//        }
     }
     
-    var actualRect: CGRect?
-    var videoRect: CGRect {
-        if self.rotate == 0 || self.rotate == 2 {
-            return actualRect ?? .zero
-            //self.playerLayer.videoRect
-        } else if self.rotate == 1 || self.rotate == 3 {
-            guard let actualRect = actualRect else { return .zero}
-            return CGRect(x: actualRect.origin.y, y: actualRect.origin.x, width: actualRect.size.height, height: actualRect.size.width)
-        } else {
-            return .zero
-        }
-    }
-
+    
+ 
+    
     private func loadCroppperView(){
         guard let time = self.video?.videoTime?.startTime else{
             return
@@ -483,20 +371,19 @@ class EditorVC: UIViewController {
                 debugPrint("actualRectContainer: \(self.croperMainContainerView.bounds)")
                 self.cropPickerView.frame = self.actualRect ?? (self.croperMainContainerView.bounds)
             })
-            
         }
     }
     
     func activeEditingStateUI(){
         DispatchQueue.main.async {
-            self.topNavBarView.isHidden = true
+            self.navView.isHidden = true
             self.editorView.isHidden = true
         }
         
     }
     func inactiveEditingStateUI(){
         DispatchQueue.main.async {
-            self.topNavBarView.isHidden = false
+            self.navView.isHidden = false
             self.editorView.isHidden = false
         }
         
@@ -517,12 +404,10 @@ class EditorVC: UIViewController {
         
         if let video{
             guard let url = video.videoURL else { return }
-
+            
             self.videoView = VideoView(frame: self.playerContainerView.bounds, viewType: .default)
             self.playerContainerView.addSubview(self.videoView)
-            
             self.videoView.delegate = self
-            
             self.videoView.url = url
             let asset = AVAsset(url: url)
             self.videoConverter = VideoConverter(asset: asset)
@@ -555,38 +440,26 @@ class EditorVC: UIViewController {
             self.timeSacleContentViewWidthConstraint.constant = self.videoSplitView.scrollview.contentSize.width - DEVICE_WIDTH
             
             let contentwidth = self.videoSplitView.scrollview.contentSize.width - DEVICE_WIDTH
-            let perSecPixel = contentwidth
+            let perSecPixel = contentwidth / (video.duration ?? 1)
             
-            
-            var currentX: CGFloat = 0 // Start position
-
-            for i in 0...Int(video.videoTime?.duration ?? 1) {
-                if i % 5 == 0 {
-                    // Create a label
-                    let lbl = UILabel()
+            for i in 0...Int(video.duration ?? 1) {
+                if (i % 3 == 0) {
+                    let lbl = UILabel(frame: CGRect(x: i * Int(perSecPixel), y: 0, width: 70, height: 12))
                     lbl.font = UIFont(name: "CircularStd-Medium", size: 9)
                     lbl.textColor = self.timescalcolor
                     lbl.text = "\(i)s"
-                    lbl.sizeToFit() // Adjust width based on text content
-                    
-                    lbl.frame.origin = CGPoint(x: currentX, y: 0) // Set position
                     self.timeSacleContentView.addSubview(lbl)
                     lbl.center.y = self.timeSacleContentView.center.y
-                    
-                    currentX += lbl.frame.width + 22 // Move forward by label width + 10px gap
                 } else {
-                    // Create a dot view
-                    let dotview = UIView(frame: CGRect(x: currentX, y: 0, width: 2, height: 2))
-                    dotview.layer.cornerRadius = 1
-                    dotview.backgroundColor = self.timescalcolor
-                    self.timeSacleContentView.addSubview(dotview)
-                    dotview.center.y = self.timeSacleContentView.center.y
-                    
-                    currentX += 22 // Move forward by 10px after a dot
+                    let dotView = UIView(frame: CGRect(x: i * Int(perSecPixel), y: 0, width: 2, height: 2))
+                    dotView.layer.cornerRadius = 1
+                    dotView.backgroundColor = self.timescalcolor
+                    self.timeSacleContentView.addSubview(dotView)
+                    dotView.center.y = self.timeSacleContentView.center.y
                 }
             }
-
-
+            
+            
         }
     }
     
@@ -605,6 +478,7 @@ class EditorVC: UIViewController {
                 self.timeLbl.text = "\(firstPartString):\(parts.rightPart)/\(firstPartDurationString)"
                 let width = self.timeLbl.textWidth()
                 self.timeLblWidthConstraint.constant = width + 20
+                self.trimmerIndicatorView.lblVideoDurationTime.text = "\(firstPartDurationString)"
                 self.view.layoutIfNeeded()
             }
             
@@ -738,10 +612,10 @@ class EditorVC: UIViewController {
             self.dismiss(animated: true)
             self.navigationController?.popViewController(animated: true)
         }))
-            
+        
         
         actionsheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler:{ (UIAlertAction)in
-                print("User click Dismiss button")
+            print("User click Dismiss button")
         }))
         self.present(actionsheet, animated: true)
         
@@ -765,7 +639,7 @@ class EditorVC: UIViewController {
     
     /// export video
     @IBAction func exportButtonAction(_ sender: UIButton) {
-        goToExportVC()
+        gotoShareVC()
     }
     
 }
@@ -776,9 +650,6 @@ extension EditorVC: PlayerViewDelegate{
         self.playerStatus = .pause
         self.playerStatus = .stop
         playPauseButton.isHidden = false
-//        if let player = self.videoView.player, let startTime = self.playerView?.videoTime?.startTime{
-//            player.seek(to: startTime, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero)
-//        }
         
     }
     
@@ -830,7 +701,6 @@ extension EditorVC: MusicViewDelegate{
                 seekTime = seekTime + startTime
             }
             player.seek(to: seekTime, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero)
-
 
             self.setProgressText(playerTime.seconds)
             
@@ -900,13 +770,13 @@ extension EditorVC: UICollectionViewDelegate{
                 print(speed)
                 self.videoView.pause()
                 //if speed >= 1.0{
-                    let sliderValue = ((5 * speed)/12) + 5.0
-                    speedSlider.value = sliderValue
-                    self.activeEditingStateUI()
-                    speedViewBottomConstraint.constant = 0
-                    UIView.animate(withDuration: 0.3) {
-                        self.view.layoutIfNeeded()
-                    }
+                let sliderValue = ((5 * speed)/12) + 5.0
+                speedSlider.value = sliderValue
+                self.activeEditingStateUI()
+                speedViewBottomConstraint.constant = 0
+                UIView.animate(withDuration: 0.3) {
+                    self.view.layoutIfNeeded()
+                }
                 //}
             }
             
@@ -944,9 +814,9 @@ extension EditorVC: UICollectionViewDelegate{
 extension EditorVC{
     
     private func stopState(){
-            self.playerStatus = .pause
-            self.videoView.pause()
-            playPauseButton.isHidden = false
+        self.playerStatus = .pause
+        self.videoView.pause()
+        playPauseButton.isHidden = false
     }
     private func cropTap() {
         
@@ -1004,11 +874,7 @@ extension EditorVC: FilterViewDelegate{
     }
     
     func filterSelected(_ filter: VideoFilter){
-        
-        
-        
         videoView.filter(filter)
-        
     }
 }
 
@@ -1023,16 +889,9 @@ extension EditorVC: CropViewDelegate{
             self.view.layoutIfNeeded()
         }
     }
-
+    
     
     func getOriginalRectFrom0(sRect: CGRect, cRect: CGRect) -> CGRect {
-        /// sRect is 90 degree supper view rect
-        /// cRect is 90 degree child view rect
-        
-        /*let x = cRect.origin.y
-        let y = sRect.size.width - (cRect.origin.x + cRect.size.width)
-        let width = cRect.size.height
-        let height = cRect.size.width*/
         
         let x = sRect.size.height - (cRect.origin.y + cRect.size.height)
         let y = cRect.origin.x
@@ -1042,7 +901,7 @@ extension EditorVC: CropViewDelegate{
         // this child 0 degree rect
         return CGRect(x: x, y: y, width: width, height: height)
     }
-
+    
     
     func doneCrop() {
         inactiveEditingStateUI()
@@ -1073,39 +932,34 @@ extension EditorVC: CropViewDelegate{
                 }
                 
                 if self.rotate == 1 || self.rotate == 3{
-                                    
+                    
                     debugPrint("tempCroppedFrame: \(tempCroppedFrame)")
                     
-                        let rect = self.videoRect
+                    let rect = self.videoRect
                     
-                        let frameX = tempCroppedFrame.origin.x * rect.size.width / imageSize.height
-                        let frameY = tempCroppedFrame.origin.y * rect.size.height / imageSize.width
-                        let frameWidth = tempCroppedFrame.size.width * rect.size.width / imageSize.height
-                        let frameHeight = tempCroppedFrame.size.height * rect.size.height / imageSize.width
-                        let dimFrame = CGRect(x: frameX, y: frameY, width: frameWidth, height: frameHeight)
-                        self.videoView.dimFrame = dimFrame
-
+                    let frameX = tempCroppedFrame.origin.x * rect.size.width / imageSize.height
+                    let frameY = tempCroppedFrame.origin.y * rect.size.height / imageSize.width
+                    let frameWidth = tempCroppedFrame.size.width * rect.size.width / imageSize.height
+                    let frameHeight = tempCroppedFrame.size.height * rect.size.height / imageSize.width
+                    let dimFrame = CGRect(x: frameX, y: frameY, width: frameWidth, height: frameHeight)
+                    self.videoView.dimFrame = dimFrame
+                    
                 }else if self.rotate == 0 || self.rotate == 2{
                     let rect = self.videoRect
                     
-                        let frameX = tempCroppedFrame.origin.x * rect.size.width / imageSize.width
-                        let frameY = tempCroppedFrame.origin.y * rect.size.height / imageSize.height
-                        let frameWidth = tempCroppedFrame.size.width * rect.size.width / imageSize.width
-                        let frameHeight = tempCroppedFrame.size.height * rect.size.height / imageSize.height
-                        let dimFrame = CGRect(x: frameX, y: frameY, width: frameWidth, height: frameHeight)
-                        self.videoView.dimFrame = dimFrame
+                    let frameX = tempCroppedFrame.origin.x * rect.size.width / imageSize.width
+                    let frameY = tempCroppedFrame.origin.y * rect.size.height / imageSize.height
+                    let frameWidth = tempCroppedFrame.size.width * rect.size.width / imageSize.width
+                    let frameHeight = tempCroppedFrame.size.height * rect.size.height / imageSize.height
+                    let dimFrame = CGRect(x: frameX, y: frameY, width: frameWidth, height: frameHeight)
+                    self.videoView.dimFrame = dimFrame
                 }
-                     
-               
             }
-            
         }
     }
     
     func cropSelected(_ crop: CropModel){
-        
         self.cropPickerView.aspectRatio = crop.ratio
-        
     }
 }
 
@@ -1118,14 +972,15 @@ extension EditorVC: TrimmerViewDelegate {
             let duration = (trimmerView.endTime! - trimmerView.startTime!).seconds
             let partsDuration = Int(duration)
             let durationString = partsDuration.secondsToHoursMinutesSecondsInString()
-            trimmerDurationLbl.text = durationString
+            self.trimmerIndicatorView.trimmerDurationLbl.text = durationString
             
             if self.isPlaying{
                 playPauseButton.isHidden = true
                 self.videoView.player?.play()
             }
         }
-
+        
+        
     }
     
     func didChangePositionBar(_ playerTime: CMTime) {
@@ -1139,9 +994,47 @@ extension EditorVC: TrimmerViewDelegate {
             let duration = (trimmerView.endTime! - trimmerView.startTime!).seconds
             let partsDuration = Int(duration)
             let durationString = partsDuration.secondsToHoursMinutesSecondsInString()
-            trimmerDurationLbl.text = durationString
+            self.trimmerIndicatorView.trimmerDurationLbl.text = durationString
+        }
+    }
+    
+    func trimmerView(_ trimmer: TrimmerView,
+                     didDrag handle: TrimmerView.Handle,
+                     x: CGFloat,
+                     time: CMTime) {
+        
+        // ✅ ড্র্যাগ করার সময় ইন্ডিকেটরটি দৃশ্যমান করুন (যদি লুকানো থাকে)
+        if self.trimmerIndicatorView.rularIndicatorView.alpha == 0.0 {
+            UIView.animate(withDuration: 0.15) {
+                self.trimmerIndicatorView.rularIndicatorView.alpha = 1.0
+                self.trimmerIndicatorView.lblIndicatorCurrentTime.alpha = 1.0
+            }
         }
         
+        let mmss = String(format: "%02d:%02d", Int(time.seconds) / 60, Int(time.seconds) % 60)
+        print("Dragging \(handle)  x=\(x)  time=\(mmss)")
+        
+        // ✅ ইন্ডিকেটরের পজিশন এবং টাইম আপডেট করুন
+        self.trimmerIndicatorView.cnstRularIndicatorViewLeading.constant = x
+        self.trimmerIndicatorView.lblIndicatorCurrentTime.text = mmss
+        
+        // লেআউট আপডেট করার জন্য এটি কল করতে পারেন
+        // self.view.layoutIfNeeded()
+    }
+
+    func trimmerView(_ trimmer: TrimmerView,
+                     didEndDragging handle: TrimmerView.Handle,
+                     x: CGFloat,
+                     time: CMTime) {
+        
+        let mmss = String(format: "%02d:%02d", Int(time.seconds) / 60, Int(time.seconds) % 60)
+        print("Ended \(handle)  x=\(x)  time=\(mmss)")
+        
+        // ✅ ড্র্যাগিং শেষে ইন্ডিকেটর আবার হাইড করে দিন
+        UIView.animate(withDuration: 0.15) {
+            self.trimmerIndicatorView.rularIndicatorView.alpha = 0.0
+            self.trimmerIndicatorView.lblIndicatorCurrentTime.alpha = 0.0
+        }
     }
 }
 

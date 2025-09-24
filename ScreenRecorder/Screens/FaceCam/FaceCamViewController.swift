@@ -70,6 +70,28 @@ class FaceCamViewController: UIViewController {
     
     @IBOutlet weak var navView: UIView!
     @IBOutlet weak var cnstNavViewHeight: NSLayoutConstraint!
+    @IBOutlet weak var tutorialBtnView: UIView!
+    @IBOutlet weak var shareBtnView: UIView!{
+        didSet{
+            self.shareBtnView.isHidden = true
+        }
+    }
+    @IBOutlet weak var editorBtnView: UIView!{
+        didSet{
+            self.editorBtnView.isHidden = true
+        }
+    }
+    
+    @IBOutlet weak var btnGotoShare: UIButton! {
+        didSet {
+            btnGotoShare.addTarget(self, action: #selector(btnGotoShareAction), for: .touchUpInside)
+        }
+    }
+    @IBOutlet weak var btnGotoEditor: UIButton! {
+        didSet {
+            btnGotoEditor.addTarget(self, action: #selector(btnGotoEditorAction), for: .touchUpInside)
+        }
+    }
     
     // MARK: - Constants
     private let bottomConstant: CGFloat = 194.0
@@ -100,6 +122,8 @@ class FaceCamViewController: UIViewController {
     private var timerCounting: Bool = false
     private var isFirstTimeLoaded = false
     private var actualRect: CGRect?
+    private var isRecording = false
+    private var faceCamVideoURL: URL?
     
     // MARK: - Data & Coordinator Properties
     var video: Video?
@@ -277,15 +301,11 @@ class FaceCamViewController: UIViewController {
         guard let video = video, let url = video.videoURL else { return }
         
         playerView = PlayerView(frame: self.playerContainerView.bounds, delegate: self)
-        
         guard let playerView = playerView else { return }
-
         playerContainerView.addSubview(playerView)
         playerContainerView.bringSubviewToFront(buttonBgView)
-        
         playerView.load(with: url) { [weak self] (videoTime, asset) in
             guard let self = self else { return }
-            
             video.duration = videoTime.duration
             video.videoTime = videoTime
             video.asset = asset
@@ -362,6 +382,7 @@ class FaceCamViewController: UIViewController {
     // MARK: - Recording Logic
     private func startFaceCamRecord() {
         let fileName = "Recording_\(Date())"
+        isRecording = true
         micSetup(.playAndRecord)
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
@@ -371,10 +392,18 @@ class FaceCamViewController: UIViewController {
                 guard let self = self, let outputURL = outputURL else { return }
                 DispatchQueue.main.async {
                     micSetup(.playback)
-                    //self.handleRecordingCompletion(outputURL: outputURL)
+                    self.isRecording = false
+                    self.faceCamVideoURL = outputURL
+                    self.showInitialNav(isShow: false)
                 }
             }
         }
+    }
+    
+    private func showInitialNav(isShow: Bool){
+        self.tutorialBtnView.isHidden = !isShow
+        self.editorBtnView.isHidden = isShow
+        self.shareBtnView.isHidden = isShow
     }
 
     private func stopFaceCamRecord() {
@@ -396,7 +425,7 @@ class FaceCamViewController: UIViewController {
         timer.invalidate()
     }
     
-    private func handleRecordingCompletion(outputURL: URL) {
+    private func handleRecordingCompletion(outputURL: URL,isForEdit: Bool) {
         let asset = AVAsset(url: outputURL)
         let duration = asset.duration
         let videoTime = VideoTime(startTime: .zero, endTime: duration)
@@ -412,7 +441,14 @@ class FaceCamViewController: UIViewController {
         )
         
         if let videoComposition = self.cropVideo(cropperRect, asset: asset) {
-            self.exportFacecam(recordedVideo, videoComposition: videoComposition)
+            if isForEdit{
+                self.exportFacecam(recordedVideo, videoComposition: videoComposition)
+            }else{
+                if let shareVC = ShareVC.customInit(video: recordedVideo, videoComposition: videoComposition,exportType: .facecam){
+                    shareVC.modalPresentationStyle = .fullScreen
+                    self.navigationController?.present(shareVC, animated: true)
+                }
+            }
         }
     }
 
@@ -514,6 +550,20 @@ class FaceCamViewController: UIViewController {
         controlVideo()
     }
     
+    @objc private func btnGotoShareAction(_ sender: UIButton) {
+        guard let faceCamVideoURL = self.faceCamVideoURL else {
+            return
+        }
+        self.handleRecordingCompletion(outputURL: faceCamVideoURL, isForEdit: false)
+    }
+    
+    @objc private func btnGotoEditorAction(_ sender: UIButton) {
+        guard let faceCamVideoURL = self.faceCamVideoURL else {
+            return
+        }
+        self.handleRecordingCompletion(outputURL: faceCamVideoURL, isForEdit: true)
+    }
+    
     @objc private func volumeValueChanged(slider: UISlider, event: UIEvent) {
         DispatchQueue.main.async {
             let normalizedValue = slider.value / 100.0
@@ -569,6 +619,26 @@ class FaceCamViewController: UIViewController {
     
     @IBAction func toggleButtonAction(_ sender: UIButton) {
         // This function is currently not implemented.
+        toggleButtonAction()
+    }
+    
+    func toggleButtonAction(){
+        if isToggle {
+            isToggle = false
+            
+            cameraView?.layer.addSublayer(cameraPreviewLayer)
+
+            DispatchQueue.main.async {
+                self.cameraPreviewLayer.frame = self.cameraView.bounds
+            }
+            
+        }else{
+            isToggle = true
+            
+            DispatchQueue.main.async {
+                self.view.layer.replaceSublayer(self.cameraView.layer, with:self.playerContainerView.layer)
+            }
+        }
     }
 }
 
@@ -577,7 +647,6 @@ extension FaceCamViewController: RecordButtonNewDelegate {
 
     func didStartRecording() {
         print("Start recording")
-        // আপনার রেকর্ডিং শুরু করার আগের কোডগুলো এখানে লিখুন
         UIView.animate(withDuration: 0.5) {
             self.playPauseButton.isHidden = true
             self.buttonBgView.transform = CGAffineTransform(translationX: 120, y: 0)

@@ -86,9 +86,6 @@ class MusicView: UIView,UIGestureRecognizerDelegate{
         
         contenttView.frame = self.bounds
         addSubview(contenttView)
-        
-
-        
     }
  
 
