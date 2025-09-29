@@ -7,79 +7,84 @@
 //
 
 import UIKit
-import Darwin
-
-let pi = Double.pi
 
 @IBDesignable
-public class WaveformView: UIView {
-    fileprivate var _phase: CGFloat = 0.0
-    fileprivate var _amplitude: CGFloat = 0.3
-
-    @IBInspectable public var waveColor: UIColor = #colorLiteral(red: 0.3343988657, green: 0.3048760295, blue: 0.9527602792, alpha: 1) // .red
-    @IBInspectable public var numberOfWaves = 5
-    @IBInspectable public var primaryWaveLineWidth: CGFloat = 3.0
-    @IBInspectable public var secondaryWaveLineWidth: CGFloat = 1.0
-    @IBInspectable public var idleAmplitude: CGFloat = 0.01
-    @IBInspectable public var frequency: CGFloat = 3.0 //1.25
-    @IBInspectable public var density: CGFloat = 5
-    @IBInspectable public var phaseShift: CGFloat = -0.15
-
-    @IBInspectable public var amplitude: CGFloat {
-        get {
-            return _amplitude
+class BarWaveformView: UIView {
+    
+    // MARK: - Customizable Properties
+    
+    /// The color of the waveform bars.
+    @IBInspectable var barColor: UIColor = .black
+    
+    /// The width of each bar.
+    @IBInspectable var barWidth: CGFloat = 4.0
+    
+    /// The spacing between each bar.
+    @IBInspectable var barSpacing: CGFloat = 2.0
+    
+    /// An array of normalized CGFloat values (from 0.0 to 1.0) representing the audio samples.
+    public var audioSamples: [CGFloat] = [] {
+        didSet {
+            // Redraw the view whenever the samples are updated.
+            setNeedsDisplay()
         }
     }
-
-    public func updateWithLevel(_ level: CGFloat) {
-        _phase += phaseShift
-        _amplitude = fmax(level, idleAmplitude)
-        setNeedsDisplay()
-    }
-
-    override public func draw(_ rect: CGRect) {
-        let context = UIGraphicsGetCurrentContext()!
-        context.clear(bounds)
-
-        backgroundColor?.set()
-        context.fill(rect)
-
-        // Draw multiple sinus waves, with equal phases but altered
-        // amplitudes, multiplied by a parable function.
-        for waveNumber in 0...numberOfWaves {
-            context.setLineWidth((waveNumber == 0 ? primaryWaveLineWidth : secondaryWaveLineWidth))
-
-            let halfHeight = bounds.height / 2.0
-            let width = bounds.width
-            let mid = width / 2.0
-
-            let maxAmplitude = halfHeight - 4.0 // 4 corresponds to twice the stroke width
-
-            // Progress is a value between 1.0 and -0.5, determined by the current wave idx, 
-            // which is used to alter the wave's amplitude.
-            let progress: CGFloat = 1.0 - CGFloat(waveNumber) / CGFloat(numberOfWaves)
-            let normedAmplitude = (1.5 * progress - 0.5) * amplitude
-
-            let multiplier: CGFloat = 1.0
-            waveColor.withAlphaComponent(multiplier * waveColor.cgColor.alpha).set()
-
-            var x: CGFloat = 0.0
-            while x < width + density {
-                // Use a parable to scale the sinus wave, that has its peak in the middle of the view.
-                let scaling = -pow(1 / mid * (x - mid), 2) + 1
-                let tempCasting: CGFloat = 2.0 * CGFloat(pi) * CGFloat(x / width) * frequency + _phase
-                let y = scaling * maxAmplitude * normedAmplitude * CGFloat(sinf(Float(tempCasting))) + halfHeight
-
-                if x == 0 {
-                    context.move(to: CGPoint(x: x, y: y))
-                } else {
-                    context.addLine(to: CGPoint(x: x, y: y))
-                }
-                
-                x += density
+    
+    // MARK: - Drawing Logic
+    
+    override func draw(_ rect: CGRect) {
+        super.draw(rect)
+        
+        // Ensure there are samples to draw.
+        guard !audioSamples.isEmpty else { return }
+        
+        // Create a path to draw all the bars.
+        let path = UIBezierPath()
+        
+        // Calculate the vertical center of the view.
+        let middleY = rect.height / 2.0
+        
+        // Iterate through each audio sample to create a bar.
+        for (index, sample) in audioSamples.enumerated() {
+            let xPosition = CGFloat(index) * (barWidth + barSpacing)
+            
+            // Stop drawing if the bars go beyond the view's width.
+            if xPosition > rect.width {
+                break
             }
             
-            context.strokePath()
+            // Ensure the sample value is within the 0.0 to 1.0 range.
+            let normalizedSample = max(0.0, min(1.0, sample))
+            
+            // Calculate the height of the bar based on the sample.
+            // A sample of 1.0 will be the full height of the view.
+            // We use max(1.0, ...) to ensure even very quiet parts are visible as a thin line.
+            let barHeight = max(1.0, normalizedSample * rect.height)
+            
+            // Create the rectangle for the current bar, centered vertically.
+            let barRect = CGRect(
+                x: xPosition,
+                y: middleY - (barHeight / 2.0),
+                width: barWidth,
+                height: barHeight
+            )
+            
+            // Add the bar's rectangle to the drawing path.
+            path.append(UIBezierPath(rect: barRect))
+        }
+        
+        // Set the fill color and draw the path.
+        barColor.setFill()
+        path.fill()
+    }
+    
+    // MARK: - Helper for generating sample data
+    
+    /// Generates random sample data for demonstration purposes.
+    public func generateRandomSamples(count: Int) {
+        self.audioSamples = (0..<count).map { _ in
+            // Generate a random value between 0.05 and 1.0
+            CGFloat.random(in: 0.05...1.0)
         }
     }
 }

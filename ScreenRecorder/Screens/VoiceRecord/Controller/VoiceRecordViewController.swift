@@ -13,45 +13,72 @@ class VoiceRecordViewController: UIViewController {
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
-    @IBOutlet weak var waveformView: WaveformView!
-    @IBOutlet weak var waveformViewNSButtonLayout: NSLayoutConstraint!
-    
+    @IBOutlet weak var waveformView: BarWaveformView!
+    @IBOutlet weak var cnstWaveformViewBottom: NSLayoutConstraint!
     @IBOutlet weak var playButtonBgView: UIView!
-    
     @IBOutlet weak var recordNameLabel: UILabel!
     @IBOutlet weak var recordingDurationLabel: UILabel!
     @IBOutlet weak var emptyView: UIView!
-    var recordButton: RecordButton?
-    
     @IBOutlet weak var recordTableView: UITableView!{
         didSet{
             recordTableView.isHidden = true
         }
     }
-
-    var audioRecorder : AVAudioRecorder?
-    //var audioPlayer : AVAudioPlayer?
+    @IBOutlet weak var lblEmptyTittle: UILabel!{
+        didSet{
+            self.lblEmptyTittle.font = .appFont_CircularStd(type: .medium, size: 16)
+            self.lblEmptyTittle.textColor = UIColor(hex: "#151517")
+        }
+    }
     
+    @IBOutlet weak var lblEmptySubTittle: UILabel!{
+        didSet{
+            self.lblEmptySubTittle.font = .appFont_CircularStd(type: .book, size: 14)
+            self.lblEmptySubTittle.textColor = UIColor(hex: "#151517").withAlphaComponent(0.60)
+        }
+    }
+    
+    @IBOutlet weak var lblRecordName: UILabel!{
+        didSet{
+            self.lblRecordName.font = .appFont_CircularStd(type: .medium, size: 20)
+            self.lblRecordName.textColor = UIColor(hex: "#151517")
+        }
+    }
+    
+    @IBOutlet weak var lblRecordDuration: UILabel!{
+        didSet{
+            self.lblRecordDuration.font = .appFont_CircularStd(type: .book, size: 16)
+            self.lblRecordDuration.textColor = UIColor(hex: "#151517").withAlphaComponent(0.60)
+        }
+    }
+    
+    @IBOutlet weak var navView: UIView!
+    @IBOutlet weak var cnstNavViewHeight: NSLayoutConstraint!
+    @IBOutlet weak var lblTittle: UILabel!{
+        didSet{
+            self.lblTittle.font = .appFont_CircularStd(type: .bold, size: 20)
+            self.lblTittle.textColor = UIColor(hex: "#151517")
+        }
+    }
+    
+    private var recordButtonView: RecordButtonViewNew?
+    var audioRecorder : AVAudioRecorder?
     fileprivate var timer: Timer!
     var isRecording : Bool = false
-    
     var voiceRecords : [VoiceRecord] = []
-    
     var selectedIndex: Int?
     var prev: Int?
-    
     var previousCell: Int?
     var nextCell: Int?
+    var isVCLoaded: Bool = false
+    private var liveAudioSamples: [CGFloat] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
         recordTableView.estimatedRowHeight = 190
         recordTableView.rowHeight = UITableView.automaticDimension
-        
         setupTableView()
         setupRecordButtonUI()
-        
         checkEmpty()
     }
     
@@ -68,6 +95,30 @@ class VoiceRecordViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         loadRecordFromCoreData()
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        if !isVCLoaded{
+            isVCLoaded = true
+            setupNavHeight()
+        }
+    }
+    
+    private func setupNavHeight(){
+        let uiType = getDeviceUIType()
+        switch uiType {
+        case .dynamicIsland:
+            print("Device has Dynamic Island")
+            self.cnstNavViewHeight.constant = NavbarHeight.withDynamicIsland.rawValue
+        case .notch:
+            print("Device has a Notch")
+            self.cnstNavViewHeight.constant = NavbarHeight.withNotch.rawValue
+        case .noNotch:
+            print("Device has no Notch")
+            self.cnstNavViewHeight.constant = NavbarHeight.withOutNotch.rawValue
+        }
+        
     }
     
     func loadRecordFromCoreData(){
@@ -106,9 +157,21 @@ class VoiceRecordViewController: UIViewController {
                 recordingDurationLabel.text = s
                 recorder.updateMeters()
                 
-                let normalizedValue = pow(10, recorder.averagePower(forChannel: 0) / 70) //20)
-                print("normalizedValue \(normalizedValue)")
-                waveformView.updateWithLevel(CGFloat(normalizedValue))
+                // Normalize the audio power level to a 0.0-1.0 range
+                let power = recorder.averagePower(forChannel: 0)
+                let normalizedValue = pow(10, power / 20) // Convert decibels to linear scale
+
+                // Add the new sample to our live array
+                self.liveAudioSamples.append(CGFloat(normalizedValue))
+                
+                // Limit the number of bars to keep it scrolling smoothly
+                let maxSamples = Int(waveformView.bounds.width / (waveformView.barWidth + waveformView.barSpacing))
+                if self.liveAudioSamples.count > maxSamples {
+                    self.liveAudioSamples.removeFirst()
+                }
+                
+                // Update the waveform view with the new array of samples
+                waveformView.audioSamples = self.liveAudioSamples
             }
         }
     }
@@ -156,13 +219,11 @@ class VoiceRecordViewController: UIViewController {
     }
     
     public func setupRecordButtonUI() {
-        recordButton = RecordButton(frame: CGRect(
-                                                x: 0,
-                                                y: 0,
-                                                width: 60,
-                                                height: 60))
-        recordButton?.delegate = self
-        self.playButtonBgView.addSubview(recordButton!)
+        recordButtonView = RecordButtonViewNew(frame: CGRect(x: 0, y: 0, width: 70, height: 70))
+        recordButtonView?.delegate = self
+        if let recordButton = recordButtonView {
+            self.playButtonBgView.addSubview(recordButton)
+        }
     }
     
     func startVoiceRecord() {
@@ -332,7 +393,6 @@ extension VoiceRecordViewController: UITableViewDelegate, UITableViewDataSource 
                         }
                     }
                 }
-                
             }
         }
     }
@@ -401,7 +461,6 @@ extension VoiceRecordViewController: UITableViewDelegate, UITableViewDataSource 
                     } catch let error {
                         print("Error renaming file: \(error)")
                     }
-                    //self.renameFile(currentFileName: name, newFileName: newFileName, tag: tag)
                 }
             }))
             vc.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -410,44 +469,79 @@ extension VoiceRecordViewController: UITableViewDelegate, UITableViewDataSource 
     }
 }
 
-extension VoiceRecordViewController: RecordButtonDelegate {
-    func tapButton(isRecording: Bool) {
-        if isRecording {
-            print("start recording")
-            UIView.animate(withDuration: 0.3) {
-                self.waveformViewNSButtonLayout.constant = 0
-                self.view.layoutIfNeeded()
-            }
-            
-            if let previousCell = previousCell {
-                self.nextCell = nil
-                recordTableView.reloadRows(at: [IndexPath(row: previousCell, section: 0)], with: .automatic)
-                self.previousCell = nil
-            }
-                    
-            if soundOnOff {
-                audioPlayer.stop()
-                timerT?.invalidate()
-                timerT = nil
-                soundOnOff = false
+extension VoiceRecordViewController: RecordButtonNewDelegate {
+    func didStartRecording() {
+        self.liveAudioSamples.removeAll()
+          waveformView.audioSamples = []
+        UIView.animate(withDuration: 0.3) {
+            self.cnstWaveformViewBottom.constant = 0
+            self.view.layoutIfNeeded()
+        }
+        
+        if let previousCell = previousCell {
+            self.nextCell = nil
+            recordTableView.reloadRows(at: [IndexPath(row: previousCell, section: 0)], with: .automatic)
+            self.previousCell = nil
+        }
                 
-                self.startVoiceRecord()
-                
-            }else{
-                
-                self.startVoiceRecord()
-            }
-            
-            //self.startVoiceRecord()
+        if soundOnOff {
+            audioPlayer.stop()
+            timerT?.invalidate()
+            timerT = nil
+            soundOnOff = false
+            self.startVoiceRecord()
         }else{
-            print("stop recording")
-            UIView.animate(withDuration: 0.3) {
-                self.waveformViewNSButtonLayout.constant = -150
-                self.view.layoutIfNeeded()
-            }
-            
-            self.stopVoiceRecord()
+            self.startVoiceRecord()
         }
     }
+    
+    func didStopRecording() {
+        print("stop recording")
+        self.liveAudioSamples.removeAll()
+           waveformView.audioSamples = []
+        UIView.animate(withDuration: 0.3) {
+            self.cnstWaveformViewBottom.constant = -150
+            self.view.layoutIfNeeded()
+        }
+        self.stopVoiceRecord()
+    }
+    
+//    func tapButton(isRecording: Bool) {
+//        if isRecording {
+//            print("start recording")
+//            UIView.animate(withDuration: 0.3) {
+//                self.waveformViewNSButtonLayout.constant = 0
+//                self.view.layoutIfNeeded()
+//            }
+//            
+//            if let previousCell = previousCell {
+//                self.nextCell = nil
+//                recordTableView.reloadRows(at: [IndexPath(row: previousCell, section: 0)], with: .automatic)
+//                self.previousCell = nil
+//            }
+//                    
+//            if soundOnOff {
+//                audioPlayer.stop()
+//                timerT?.invalidate()
+//                timerT = nil
+//                soundOnOff = false
+//                
+//                self.startVoiceRecord()
+//                
+//            }else{
+//                
+//                self.startVoiceRecord()
+//            }
+//            
+//        }else{
+//            print("stop recording")
+//            UIView.animate(withDuration: 0.3) {
+//                self.waveformViewNSButtonLayout.constant = -150
+//                self.view.layoutIfNeeded()
+//            }
+//            
+//            self.stopVoiceRecord()
+//        }
+//    }
 }
 

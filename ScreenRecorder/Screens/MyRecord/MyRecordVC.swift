@@ -13,12 +13,19 @@ import AVKit
 
 class MyRecordVC: UIViewController {
 
-
-    let share = DirectoryManager.shared
     
-    @IBOutlet weak var collectionView: UICollectionView!{
+    @IBOutlet weak var navView: UIView!
+    @IBOutlet weak var cnstNavViewHeight: NSLayoutConstraint!
+    @IBOutlet weak var lblTittle: UILabel!{
         didSet{
-            collectionView.isHidden = true
+            self.lblTittle.font = .appFont_CircularStd(type: .bold, size: 20)
+            self.lblTittle.textColor = UIColor(hex: "#151517")
+        }
+    }
+    
+    @IBOutlet weak var myRecordCollectionView: UICollectionView!{
+        didSet{
+            myRecordCollectionView.isHidden = true
         }
     }
     @IBOutlet weak var emptyView: UIView!
@@ -27,37 +34,61 @@ class MyRecordVC: UIViewController {
     var isComeFromFaceCam: Bool = false
     var isComeCommentary: Bool = false
     var isComeVideoToGif: Bool = false
-    
+    let share = DirectoryManager.shared
     var selectToolType = SelectToolType.edit
+    var isVCLoaded: Bool = false
+    
     
     override var preferredStatusBarStyle: UIStatusBarStyle{
         return .lightContent
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-
         setupCollectionView()
         loadVideo()
     }
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        if !isVCLoaded{
+            isVCLoaded = true
+            setupNavHeight()
+        }
+    }
 
     override func viewWillAppear(_ animated: Bool) {
-        collectionView.reloadData()
+        myRecordCollectionView.reloadData()
     }
     
     // MARK: - Private Methods
     
     func setupCollectionView() {
         let nib = UINib(nibName: "SRCVCell", bundle: nil)
-        collectionView.register(nib, forCellWithReuseIdentifier: "SRCVCell")
-        collectionView.delegate = self
-        collectionView.dataSource = self
+        myRecordCollectionView.register(nib, forCellWithReuseIdentifier: "SRCVCell")
+        myRecordCollectionView.delegate = self
+        myRecordCollectionView.dataSource = self
+    }
+    
+    private func setupNavHeight(){
+        let uiType = getDeviceUIType()
+        switch uiType {
+        case .dynamicIsland:
+            print("Device has Dynamic Island")
+            self.cnstNavViewHeight.constant = NavbarHeight.withDynamicIsland.rawValue
+        case .notch:
+            print("Device has a Notch")
+            self.cnstNavViewHeight.constant = NavbarHeight.withNotch.rawValue
+        case .noNotch:
+            print("Device has no Notch")
+            self.cnstNavViewHeight.constant = NavbarHeight.withOutNotch.rawValue
+        }
+        
     }
     
     func loadVideo() {
         
         self.savedVideos = CoreDataManager.shared.fetchSavedVideos()
         DispatchQueue.main.async { [self] in
-            collectionView.reloadData()
+            myRecordCollectionView.reloadData()
         }
         checkEmpty()
     }
@@ -66,12 +97,12 @@ class MyRecordVC: UIViewController {
         
         if savedVideos.count > 0{
             DispatchQueue.main.async { [self] in
-                collectionView.isHidden = false
+                myRecordCollectionView.isHidden = false
                 emptyView.isHidden = true
             }
         }else{
             DispatchQueue.main.async { [self] in
-                collectionView.isHidden = true
+                myRecordCollectionView.isHidden = true
                 emptyView.isHidden = false
             }
         }
@@ -79,8 +110,8 @@ class MyRecordVC: UIViewController {
     
 
     func duplicateVideo(sender: UIButton) {
-        if let selectedCell = sender.superview?.superview as? SRCVCell {
-            if let indexPath = collectionView.indexPath(for: selectedCell) {
+        if let selectedCell = sender.superview?.superview?.superview as? SRCVCell {
+            if let indexPath = myRecordCollectionView.indexPath(for: selectedCell) {
                 print("selected index : ", indexPath.row)
                 
                 let dateFormatter = DateFormatter()
@@ -107,7 +138,7 @@ class MyRecordVC: UIViewController {
                                 
                                 self.savedVideos.insert(video, at: 0)
                                 DispatchQueue.main.async {
-                                    self.collectionView.reloadItems(at: [IndexPath(item: 0, section: 0)])
+                                    self.myRecordCollectionView.reloadData()
                                 }
                             }
                             
@@ -122,11 +153,9 @@ class MyRecordVC: UIViewController {
     }
     
     func renameVideo(sender: UIButton) {
-        if let selectedCell = sender.superview?.superview as? SRCVCell {
-            if let indexPath = collectionView.indexPath(for: selectedCell) {
+        if let selectedCell = sender.superview?.superview?.superview as? SRCVCell {
+            if let indexPath = myRecordCollectionView.indexPath(for: selectedCell) {
                 print("selected index : ", indexPath.row)
-                
-                //if let name = savedVideos[indexPath.row].name {
                     let alert = UIAlertController(title: "Rename", message: "\(savedVideos[indexPath.row].displayName ?? "")", preferredStyle: .alert)
                     alert.addTextField()
                     let textField = alert.textFields![0] as UITextField
@@ -143,13 +172,14 @@ class MyRecordVC: UIViewController {
                         }
                         
                         DispatchQueue.main.async { [self] in
-                            self?.collectionView.reloadItems(at: [indexPath])
+                            self?.myRecordCollectionView.reloadItems(at: [indexPath])
                         }
                     }
                     
                     let cancel = UIAlertAction(title: "Cancel", style: .default) { (alertAction) in }
                     alert.addAction(cancel)
                     alert.addAction(submitAction)
+                   alert.overrideUserInterfaceStyle = .light
                     present(alert, animated: true)
                 
             }
@@ -157,20 +187,20 @@ class MyRecordVC: UIViewController {
     }
     
     func removeVideo(sender: UIButton) {
-        if let selectedCell = sender.superview?.superview as? SRCVCell {
+        if let selectedCell = sender.superview?.superview?.superview as? SRCVCell {
             
             let actionsheet1 = UIAlertController(title: "This video will be deleted from your my recordings.", message: nil, preferredStyle: .actionSheet)
             
             actionsheet1.addAction(UIAlertAction(title: "Delete Video", style: .destructive, handler: {
              [weak self]  (UIAlertAction) in
                 
-                if let indexPath = self?.collectionView.indexPath(for: selectedCell) {
+                if let indexPath = self?.myRecordCollectionView.indexPath(for: selectedCell) {
                     print("selected index : ", indexPath.row)
                     
                     let name = self?.savedVideos[indexPath.row].name
                     let thumbName = self?.savedVideos[indexPath.row].thumbName
                     
-                    self?.collectionView.deleteItems(at: [indexPath])
+                    self?.myRecordCollectionView.reloadData()
                     
                     guard let video = self?.savedVideos[indexPath.row] else { return }
                     CoreDataManager.shared.deleteSavedVideo(video)
@@ -202,11 +232,12 @@ class MyRecordVC: UIViewController {
     }
     
     func shareVideo(sender: UIButton) {
-        if let selectedCell = sender.superview?.superview as? SRCVCell {
-            if let indexPath = collectionView.indexPath(for: selectedCell) {
+        if let selectedCell = sender.superview?.superview?.superview as? SRCVCell {
+            if let indexPath = myRecordCollectionView.indexPath(for: selectedCell) {
                 if let name = savedVideos[indexPath.row].name {
                     guard let videoURL = share.appGroupBaseURL()?.appendingPathComponent(name) else { return }
                     let vc = UIActivityViewController(activityItems: [videoURL], applicationActivities: [])
+                    vc.overrideUserInterfaceStyle = .light
                     self.present(vc, animated: true)
                 }
             }
@@ -223,21 +254,21 @@ class MyRecordVC: UIViewController {
     }
     
     func goToCommentaryVC(videoUrl: URL) {
-//        let vc = loadVCfromStoryBoard(name: "Commentary", identifier: "CommentaryViewController") as! CommentaryViewController
-//        let video = Video(videoUrl)
-//        vc.video = video
-//        DispatchQueue.main.async{
-//            self.navigationController?.pushViewController(vc, animated: true)
-//        }
+        let vc = loadVCfromStoryBoard(name: "Commentary", identifier: "CommentaryViewController") as! CommentaryViewController
+        let video = Video(videoUrl)
+        vc.video = video
+        DispatchQueue.main.async{
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
     }
     
     func goToVideoToGifVC(videoUrl: URL) {
-//        let vc = loadVCfromStoryBoard(name: "VideoToGIF", identifier: "VideoToGIFViewController") as! VideoToGIFViewController
-//        let video = Video(videoUrl)
-//        vc.video = video
-//        DispatchQueue.main.async {
-//            self.navigationController?.pushViewController(vc, animated: true)
-//        }
+        let vc = loadVCfromStoryBoard(name: "VideoToGIF", identifier: "VideoToGIFViewController") as! VideoToGIFViewController
+        let video = Video(videoUrl)
+        vc.video = video
+        DispatchQueue.main.async {
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
     }
     
     // MARK: - Button Action
@@ -250,40 +281,44 @@ class MyRecordVC: UIViewController {
     @objc func moreButtonAction(_ sender: UIButton) {
         print(sender.tag)
         
-        if let selectedCell = sender.superview?.superview as? SRCVCell {
-            if let indexPath = collectionView.indexPath(for: selectedCell) {
+        if let selectedCell = sender.superview?.superview?.superview as? SRCVCell {
+            if let indexPath = myRecordCollectionView.indexPath(for: selectedCell) {
                 let name = savedVideos[indexPath.row].displayName
                 
-                let actionsheet = UIAlertController(title: nil, message: name, preferredStyle: .actionSheet)
-                
-                actionsheet.addAction(UIAlertAction(title: "Rename", style: .default , handler:{ (UIAlertAction)in
-                    print("Rename")
-                    self.renameVideo(sender: sender)
-                }))
-                    
-                actionsheet.addAction(UIAlertAction(title: "Duplicate", style: .default , handler: {
-                    (UIAlertAction)in
-                    print("Duplicate")
-                    self.duplicateVideo(sender: sender)
-                }))
+                // Example of how to call the updated RecordCellOptionVC
 
-                actionsheet.addAction(UIAlertAction(title: "Share", style: .default , handler:{ (UIAlertAction)in
-                    print("Share")
-                    self.shareVideo(sender: sender)
-                }))
-                
-                actionsheet.addAction(UIAlertAction(title: "Delete", style: .destructive , handler:{ (UIAlertAction)in
-                    print("delete")
-                    self.removeVideo(sender: sender)
-                    
-                    
+                // 1. Define which options you want to show. You can include any or all of them.
+                let options: [RecordCellOptionVC.Option] = [.rename, .duplicate, .share, .delete]
 
-                }))
+                // 2. Instantiate the view controller with the options and their corresponding actions.
+                let selectionVC = RecordCellOptionVC.instantiate(
+                    options: options,
+                    onSelectRename: { [weak self] in
+                        print("Rename action triggered.")
+                        self?.renameVideo(sender: sender)
+                    },
+                    onSelectDuplicate: { [weak self] in
+                        print("Duplicate action triggered.")
+                        self?.duplicateVideo(sender: sender)
+                    },
+                    onSelectShare: { [weak self] in
+                        self?.shareVideo(sender: sender)
+                    },
+                    onSelectDelete: { [weak self] in
+                        print("Delete action triggered.")
+                        self?.removeVideo(sender: sender)
+                    }
+                )
+
+                // 3. Present the sheet. This part remains the same.
+                // Note: The grabber visibility is now set inside the VC, so this check is optional.
+                if let sheet = selectionVC.sheetPresentationController {
+                    // You can still customize the sheet here if needed.
+                    // For example: sheet.largestUndimmedDetentIdentifier = .medium
+                }
+
+                self.present(selectionVC, animated: true)
                 
-                actionsheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler:{ (UIAlertAction)in
-                        print("User click Dismiss button")
-                    }))
-                self.present(actionsheet, animated: true)
             }
         }
        
@@ -317,7 +352,6 @@ extension MyRecordVC: UICollectionViewDelegate, UICollectionViewDataSource, UICo
         }
         
         cell.video = self.savedVideos[indexPath.item]
-        cell.moreButton.addTarget(self, action: #selector(moreButtonAction), for: .touchUpInside)
         cell.moreBigButton.addTarget(self, action: #selector(moreButtonAction), for: .touchUpInside)
         return cell
     }
@@ -340,7 +374,7 @@ extension MyRecordVC: UICollectionViewDelegate, UICollectionViewDataSource, UICo
             goToVideoToAudioVC(videoUrl: url)
             
         case .edit:
-            gotoVideoEditor(videoUrl: url)
+            gotoVideoPreview(videoUrl: url)
             
         case .voiceReocrd:
             gotoVoiceRecorVC(videoUrl: url)
@@ -380,8 +414,7 @@ extension MyRecordVC: UICollectionViewDelegate, UICollectionViewDataSource, UICo
   
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let w = (DEVICE_WIDTH - 40) / 2
-        let h = (285 * w)/170
-        return CGSize(width: w - 5, height: h - 50)
+        return CGSize(width: w - 5, height: w - 5)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
@@ -398,6 +431,20 @@ extension MyRecordVC {
     
     func gotoVideoEditor(videoUrl: URL){
         if let vc = loadVCfromStoryBoard(name: "Editor", identifier: "EditorViewController") as? EditorVC {
+          
+            let video = Video(videoUrl)
+            if let img = videoUrl.generateThumbnail(){
+                video.videoThumb = img
+            }
+            vc.video = video
+            DispatchQueue.main.async{
+                self.navigationController?.pushViewController(vc, animated: true)
+            }
+        }
+    }
+    
+    func gotoVideoPreview(videoUrl: URL){
+        if let vc = loadVCfromStoryBoard(name: "MyRecord", identifier: "MyRecordVideoPreviewVC") as? MyRecordVideoPreviewVC {
           
             let video = Video(videoUrl)
             if let img = videoUrl.generateThumbnail(){

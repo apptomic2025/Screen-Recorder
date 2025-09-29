@@ -17,11 +17,6 @@ struct Tools {
     var isProItem: Bool = false
 }
 
-//enum SelectToolType: Int {
-//    case faceCam, commentary, gif, edit, voiceReocrd, photoToVideo,videoToPhoto, videoToAudio, trim, compress, speed, crop, extractAudio, none
-//}
-
-
 class VideoToolsViewController: UIViewController {
 
     enum SelectToolType: Int {
@@ -51,6 +46,9 @@ class VideoToolsViewController: UIViewController {
             self.lblVideoTools.textColor = UIColor(hex: "#151517")
         }
     }
+    
+    @IBOutlet weak var navView: UIView!
+    @IBOutlet weak var cnstNavViewHeight: NSLayoutConstraint!
 
 
     @IBOutlet weak var iapButtonBgView: UIView!
@@ -80,14 +78,13 @@ class VideoToolsViewController: UIViewController {
         Tools(icon: UIImage(named: "VideoToAudioIcon")!, smallTitle: "VIDEO", bigTitle: "Video to Audio",isProItem: true),
         Tools(icon: UIImage(named: "TrimIcon")!, smallTitle: "VIDEO", bigTitle: "Video Trimmer"),
         Tools(icon: UIImage(named: "ComptrssIcon")!, smallTitle: "VIDEO", bigTitle: "Video Compress"),
-        Tools(icon: UIImage(named: "PhotoToVideoIcon")!, smallTitle: "VIDEO", bigTitle: "Photo to Video"),
         Tools(icon: UIImage(named: "SpeedIcon")!, smallTitle: "VIDEO", bigTitle: "Video Speed"),
         Tools(icon: UIImage(named: "CropIcon")!, smallTitle: "CROP", bigTitle: "Crop Video")
     ]
     
     var exportVC: ExportSettingsVC?
-    
     var selectedFrame: [UIImage] = []
+    var isVCLoaded: Bool = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -111,30 +108,27 @@ class VideoToolsViewController: UIViewController {
         }
     }
     
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        if !isVCLoaded{
+            isVCLoaded = true
+            setupNavHeight()
+        }
+    }
+    
     private func presentPicker(type: Bool?=nil) {
         var configuration = PHPickerConfiguration(photoLibrary: .shared())
-        
-        // Set the filter type according to the user’s selection.
         if type != nil {
             configuration.filter = .any(of: [.images])
         }else{
             configuration.filter = .any(of: [.videos])
         }
-        // configuration.filter = .any(of: [.videos])
-        // Set the mode to avoid transcoding, if possible, if your app supports arbitrary image/video encodings.
         configuration.preferredAssetRepresentationMode = .current
-        // Set the selection behavior to respect the user’s selection order.
-        //configuration.selection = .ordered
-        // Set the selection limit to enable multiselection.
         if type != nil {
             configuration.selectionLimit = 90
         }else{
             configuration.selectionLimit = 1
         }
-        // configuration.selectionLimit = 1
-        // Set the preselected asset identifiers with the identifiers that the app tracks.
-        //configuration.preselectedAssetIdentifiers = selectedAssetIdentifiers
-        
         let picker = PHPickerViewController(configuration: configuration)
         picker.delegate = self
         picker.modalPresentationStyle = .fullScreen
@@ -146,9 +140,23 @@ class VideoToolsViewController: UIViewController {
     func setupCollectionView() {
         let nib = UINib(nibName: "VideoToolsCollectionViewCell", bundle: nil)
         toolsCollectionView.register(nib, forCellWithReuseIdentifier: cellIdentifier)
-        
         toolsCollectionView.delegate = self
         toolsCollectionView.dataSource = self
+    }
+    
+    private func setupNavHeight(){
+        let uiType = getDeviceUIType()
+        switch uiType {
+        case .dynamicIsland:
+            print("Device has Dynamic Island")
+            self.cnstNavViewHeight.constant = NavbarHeight.withDynamicIsland.rawValue
+        case .notch:
+            print("Device has a Notch")
+            self.cnstNavViewHeight.constant = NavbarHeight.withNotch.rawValue
+        case .noNotch:
+            print("Device has no Notch")
+            self.cnstNavViewHeight.constant = NavbarHeight.withOutNotch.rawValue
+        }
     }
     
     func presentPHpicker(selectToolType: SelectToolType){
@@ -328,7 +336,8 @@ extension VideoToolsViewController: UICollectionViewDelegate, UICollectionViewDa
 
         case SelectToolType.voiceReocrd.rawValue:
             if !AppData.premiumUser{
-                iapButtonAction()
+                gotoVoiceRecordVC()
+                //iapButtonAction()
             }else{
                 selectToolType = .voiceReocrd
                 gotoVoiceRecordVC()

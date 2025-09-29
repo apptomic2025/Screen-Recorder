@@ -18,7 +18,6 @@ class SRCVCell: UICollectionViewCell {
     @IBOutlet weak var fileNameLabel: UILabel!
     @IBOutlet weak var durationLabel: UILabel!
     @IBOutlet weak var lblCreateDate: UILabel!
-    @IBOutlet weak var moreButton: UIButton!
     @IBOutlet weak var moreBigButton: UIButton!
     @IBOutlet weak var durationLblWidthConstraint: NSLayoutConstraint!
 
@@ -26,7 +25,6 @@ class SRCVCell: UICollectionViewCell {
         didSet{
             if let video = video{
                 fileNameLabel.text = video.displayName
-                durationLabel.text = (video.size ?? "0 MB")
                 let width = self.durationLabel.textWidth()
                 self.durationLblWidthConstraint.constant = width + 15
                 
@@ -42,7 +40,8 @@ class SRCVCell: UICollectionViewCell {
                     let duration = Int(video.duration)
                     let durationString = duration.secondsToHoursMinutesSecondsInString()
 
-                    lblCreateDate.text = dateString + " | " + durationString
+                    lblCreateDate.text = (video.size ?? "0 MB")
+                    durationLabel.text = durationString
 
                 }
                 
