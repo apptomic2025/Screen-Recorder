@@ -13,7 +13,7 @@ var soundOnOff = false
 var timerT: Timer?
 
 class VoiceRecordTvCell: UITableViewCell {
-
+    
     @IBOutlet weak var recordNameLeftNSLayout: NSLayoutConstraint!
     @IBOutlet weak var thumbImageView: UIImageView!{
         didSet{
@@ -21,9 +21,25 @@ class VoiceRecordTvCell: UITableViewCell {
         }
     }
     
-    @IBOutlet weak var recordNameLabel: UITextField!
-    @IBOutlet weak var creationDateLabel: UILabel!
-    @IBOutlet weak var headerTotalDurationLbl: UILabel!
+    @IBOutlet weak var lblRecordingName: UITextField!{
+        didSet {
+            lblRecordingName.font = .appFont_CircularStd(type: .medium, size: 16)
+            lblRecordingName.textColor = UIColor(hex: "#151517")
+        }
+    }
+    @IBOutlet weak var lblCreationDate: UILabel!{
+        didSet {
+            lblCreationDate.font = .appFont_CircularStd(type: .book, size: 14)
+            lblCreationDate.textColor = UIColor(hex: "#151517").withAlphaComponent(0.40)
+        }
+    }
+    
+    @IBOutlet weak var lblTotalDuration: UILabel!{
+        didSet {
+            lblTotalDuration.font = .appFont_CircularStd(type: .book, size: 14)
+            lblTotalDuration.textColor = UIColor(hex: "#151517").withAlphaComponent(0.40)
+        }
+    }
     
     @IBOutlet weak var slider: UISlider!{
         didSet{
@@ -31,23 +47,37 @@ class VoiceRecordTvCell: UITableViewCell {
         }
     }
     @IBOutlet weak var playButton: UIButton!
-    @IBOutlet weak var currentDurationLbl: UILabel!
-    @IBOutlet weak var endingDurationLbl: UILabel!
+    @IBOutlet weak var currentDurationLbl: UILabel!{
+        didSet {
+            currentDurationLbl.font = .appFont_CircularStd(type: .book, size: 12)
+            currentDurationLbl.textColor = UIColor(hex: "#151517").withAlphaComponent(0.40)
+        }
+    }
+    @IBOutlet weak var endingDurationLbl: UILabel!{
+        didSet {
+            endingDurationLbl.font = .appFont_CircularStd(type: .book, size: 12)
+            endingDurationLbl.textColor = UIColor(hex: "#151517").withAlphaComponent(0.40)
+        }
+    }
     @IBOutlet weak var trashButton: UIButton!
     @IBOutlet weak var optionButton: UIButton!
-
+    @IBOutlet weak var seperatorView: UIView!{
+        didSet{
+            self.seperatorView.backgroundColor = UIColor(hex: "#151517").withAlphaComponent(0.04)
+        }
+    }
     var record: VoiceRecord? {
         didSet{
             if let record {
                 recordNameLeftNSLayout.constant = 20
                 thumbImageView.isHidden = true
                 
-                recordNameLabel.text = record.name
-                headerTotalDurationLbl.text = CMTime(value: CMTimeValue(record.duration), timescale: 1).toHourMinuteSecond()
+                lblRecordingName.text = record.name
+                lblTotalDuration.text = CMTime(value: CMTimeValue(record.duration), timescale: 1).toHourMinuteSecond()
                 
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "MMM d, yyyy h:mm a"
-                creationDateLabel.text = dateFormatter.string(from: record.creationDate!)
+                lblCreationDate.text = dateFormatter.string(from: record.creationDate!)
             }
         }
     }
@@ -60,33 +90,41 @@ class VoiceRecordTvCell: UITableViewCell {
                     thumbImageView.image = UIImage(contentsOfFile: url.path)
                 }
                 
-                recordNameLabel.text = extract.name
-                headerTotalDurationLbl.text = CMTime(value: CMTimeValue(extract.duration), timescale: 1).toHourMinuteSecond()
+                lblRecordingName.text = extract.name
+                lblTotalDuration.text = CMTime(value: CMTimeValue(extract.duration), timescale: 1).toHourMinuteSecond()
                 
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "MMM d, yyyy h:mm a"
-                creationDateLabel.text = dateFormatter.string(from: extract.creationDate!)
+                lblCreationDate.text = dateFormatter.string(from: extract.creationDate!)
             }
         }
     }
     
-//    var audioPlayer = AVAudioPlayer()
-    fileprivate let seekDuration: Float64 = 15.0
-    //var soundOnOff = false
-    //var timerT: Timer?
+    fileprivate let seekDuration: Float64 = 10.0
     
     var counter: Float = 0.0
-
+    
     override func awakeFromNib() {
         super.awakeFromNib()
-                
-        recordNameLabel.isEnabled = false
-        slider.setThumbImage(#imageLiteral(resourceName: "slider"), for: .normal)
+        
+        lblRecordingName.isEnabled = false
+        // 1. Set the thumb (knob) image
+        // Make sure you have an image named "sliderThumb" in your Assets.xcassets
+        let thumbImage = UIImage(named: "sliderThumbForVideoAdio")
+        slider.setThumbImage(thumbImage, for: .normal)
+        slider.setThumbImage(thumbImage, for: .highlighted)
+        
+        // 2. Set the active and inactive track colors
+        // Active color (left side of the thumb)
+        slider.minimumTrackTintColor = UIColor(hex: "#FE655C")
+        
+        // Inactive color (right side of the thumb)
+        slider.maximumTrackTintColor = UIColor(hex: "#151517").withAlphaComponent(0.04)
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-        // Configure the view for the selected state
+        
     }
     
     @objc func onSliderValChanged(slider: UISlider, event: UIEvent) {
@@ -96,15 +134,15 @@ class VoiceRecordTvCell: UITableViewCell {
                 // handle drag began
             case .moved:
                 // handle drag moved
-            
+                
                 audioPlayer.stop()
                 timerT?.invalidate()
                 timerT = nil
-            
+                
                 slider.maximumValue = Float(audioPlayer.duration)
                 counter = slider.value
                 audioPlayer.currentTime = TimeInterval(counter)
-
+                
                 debugPrint(slider.value)
                 
                 currentDurationLbl.text = self.stringFromTimeInterval(interval: TimeInterval(counter))
@@ -119,11 +157,13 @@ class VoiceRecordTvCell: UITableViewCell {
                     
                     audioPlayer.prepareToPlay()
                     audioPlayer.play()
-                    playButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
+                    let iconImage = UIImage(systemName: "pause.fill")
+                    playButton.setImage(iconImage, for: .normal)
                     
                 }else{ /// not isPlaying
                     audioPlayer.pause()
-                    playButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
+                    let iconImage = UIImage(named: "PlayBtnIconForVideoToAdio")
+                    playButton.setImage(iconImage, for: .normal)
                 }
                 
             default:
@@ -138,8 +178,6 @@ class VoiceRecordTvCell: UITableViewCell {
         let interval = Int(interval)
         let seconds = interval % 60
         let minutes = (interval / 60) % 60
-//        let hours = (interval / 3600)
-//        return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
         return String(format: "%02d:%02d", minutes, seconds)
     }
     
@@ -152,8 +190,9 @@ class VoiceRecordTvCell: UITableViewCell {
             counter = 0.0
             slider.value = counter
             currentDurationLbl.text = self.stringFromTimeInterval(interval: TimeInterval(counter))
-
-            playButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
+            
+            let iconImage = UIImage(named: "PlayBtnIconForVideoToAdio")
+            playButton.setImage(iconImage, for: .normal)
         }else{
             counter += 0.01
             debugPrint(counter)
@@ -166,7 +205,7 @@ class VoiceRecordTvCell: UITableViewCell {
             endingDurationLbl.text = "-" + self.stringFromTimeInterval(interval: TimeInterval(audioPlayer.duration - audioPlayer.currentTime))
         }
     }
-
+    
     
     func playSlider(){
         slider.maximumValue = Float(audioPlayer.duration)
@@ -191,7 +230,7 @@ class VoiceRecordTvCell: UITableViewCell {
             audioPlayer.prepareToPlay()
             audioPlayer.play()
             playButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
-
+            
         }else{
             audioPlayer.currentTime = newTime
             
@@ -202,7 +241,8 @@ class VoiceRecordTvCell: UITableViewCell {
             endingDurationLbl.text = "-" + self.stringFromTimeInterval(interval: TimeInterval(audioPlayer.duration - audioPlayer.currentTime))
             
             audioPlayer.pause()
-            playButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
+            let iconImage = UIImage(named: "PlayBtnIconForVideoToAdio")
+            playButton.setImage(iconImage, for: .normal)
         }
     }
     
@@ -211,9 +251,10 @@ class VoiceRecordTvCell: UITableViewCell {
             timerT?.invalidate()
             timerT = nil
             audioPlayer.stop()
-            sender.setImage(UIImage(systemName: "play.fill"), for: .normal)
+            let iconImage = UIImage(named: "PlayBtnIconForVideoToAdio")
+            playButton.setImage(iconImage, for: .normal)
             soundOnOff = false
-
+            
         }else {
             playSlider()
             
@@ -228,7 +269,7 @@ class VoiceRecordTvCell: UITableViewCell {
         print("15 second forward.")
         let currentTime = audioPlayer.currentTime
         let newTime = currentTime + seekDuration
-       
+        
         if audioPlayer.isPlaying { /// play
             let currentDuration = audioPlayer.duration - currentTime
             
@@ -254,7 +295,7 @@ class VoiceRecordTvCell: UITableViewCell {
                 
                 currentDurationLbl.text = self.stringFromTimeInterval(interval: audioPlayer.currentTime)
                 endingDurationLbl.text = "-" + self.stringFromTimeInterval(interval: TimeInterval(audioPlayer.duration - audioPlayer.currentTime))
-
+                
                 audioPlayer.prepareToPlay()
                 audioPlayer.play()
                 playButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
@@ -274,7 +315,8 @@ class VoiceRecordTvCell: UITableViewCell {
                 endingDurationLbl.text = "-" + self.stringFromTimeInterval(interval: TimeInterval(audioPlayer.duration - audioPlayer.currentTime))
                 
                 audioPlayer.pause()
-                playButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
+                let iconImage = UIImage(named: "PlayBtnIconForVideoToAdio")
+                playButton.setImage(iconImage, for: .normal)
                 
             }else{
                 
@@ -287,43 +329,14 @@ class VoiceRecordTvCell: UITableViewCell {
                 endingDurationLbl.text = "-" + self.stringFromTimeInterval(interval: TimeInterval(audioPlayer.duration - audioPlayer.currentTime))
                 
                 audioPlayer.pause()
-                playButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
+                let iconImage = UIImage(named: "PlayBtnIconForVideoToAdio")
+                playButton.setImage(iconImage, for: .normal)
             }
         }
     }
-
+    
     
     @IBAction func sliderValueChanged(_ sender: UISlider) {
         
-//        if audioPlayer.isPlaying{
-//
-//            slider.maximumValue = Float(audioPlayer.duration)
-//            counter = slider.value
-//            debugPrint(slider.value)
-//
-//            audioPlayer.currentTime = TimeInterval(counter)
-//
-//            currentDurationLbl.text = self.stringFromTimeInterval(interval: TimeInterval(counter))
-//            endingDurationLbl.text = "-" + self.stringFromTimeInterval(interval: TimeInterval(audioPlayer.duration - TimeInterval(counter)))
-//
-//
-//            audioPlayer.prepareToPlay()
-//            audioPlayer.play()
-//            playButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
-//
-//        }else{
-//            slider.maximumValue = Float(audioPlayer.duration)
-//            counter = slider.value
-//            debugPrint(slider.value)
-//
-//            audioPlayer.currentTime = TimeInterval(counter)
-//
-//            currentDurationLbl.text = self.stringFromTimeInterval(interval: TimeInterval(counter))
-//            endingDurationLbl.text = "-" + self.stringFromTimeInterval(interval: TimeInterval(audioPlayer.duration - TimeInterval(counter)))
-//
-//            audioPlayer.pause()
-//            playButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
-//        }
     }
-
 }

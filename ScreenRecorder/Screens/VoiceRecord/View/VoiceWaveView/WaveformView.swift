@@ -1,11 +1,3 @@
-//
-//  WaveformView.swift
-//  WaveformView
-//
-//  Created by Jonathan on 3/14/15.
-//  Copyright (c) 2015 Underwood. All rights reserved.
-//
-
 import UIKit
 
 @IBDesignable
@@ -17,10 +9,14 @@ class BarWaveformView: UIView {
     @IBInspectable var barColor: UIColor = .black
     
     /// The width of each bar.
-    @IBInspectable var barWidth: CGFloat = 4.0
+    @IBInspectable var barWidth: CGFloat = 1.5 // Changed as requested
     
     /// The spacing between each bar.
-    @IBInspectable var barSpacing: CGFloat = 2.0
+    @IBInspectable var barSpacing: CGFloat = 4.0 // Changed as requested
+    
+    /// A multiplier to make the waveform appear taller. Default is 1.0 (no change).
+    /// Values greater than 1.0 will amplify the bars.
+    @IBInspectable var amplificationMultiplier: CGFloat = 1.3
     
     /// An array of normalized CGFloat values (from 0.0 to 1.0) representing the audio samples.
     public var audioSamples: [CGFloat] = [] {
@@ -56,10 +52,11 @@ class BarWaveformView: UIView {
             // Ensure the sample value is within the 0.0 to 1.0 range.
             let normalizedSample = max(0.0, min(1.0, sample))
             
-            // Calculate the height of the bar based on the sample.
-            // A sample of 1.0 will be the full height of the view.
-            // We use max(1.0, ...) to ensure even very quiet parts are visible as a thin line.
-            let barHeight = max(1.0, normalizedSample * rect.height)
+            // Amplify the sample to make bars appear taller
+            let amplifiedSample = min(1.0, normalizedSample * amplificationMultiplier)
+            
+            // Calculate the height of the bar based on the amplified sample.
+            let barHeight = max(barWidth, amplifiedSample * rect.height)
             
             // Create the rectangle for the current bar, centered vertically.
             let barRect = CGRect(
@@ -69,8 +66,9 @@ class BarWaveformView: UIView {
                 height: barHeight
             )
             
-            // Add the bar's rectangle to the drawing path.
-            path.append(UIBezierPath(rect: barRect))
+            // Use a rounded rectangle for the path to create a "pill" shape.
+            let barPath = UIBezierPath(roundedRect: barRect, cornerRadius: barWidth / 2)
+            path.append(barPath)
         }
         
         // Set the fill color and draw the path.

@@ -67,16 +67,12 @@ class VoiceRecordViewController: UIViewController {
     var isRecording : Bool = false
     var voiceRecords : [VoiceRecord] = []
     var selectedIndex: Int?
-    var prev: Int?
-    var previousCell: Int?
-    var nextCell: Int?
+    var expandedIndexPath: IndexPath?
     var isVCLoaded: Bool = false
     private var liveAudioSamples: [CGFloat] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        recordTableView.estimatedRowHeight = 190
-        recordTableView.rowHeight = UITableView.automaticDimension
         setupTableView()
         setupRecordButtonUI()
         checkEmpty()
@@ -216,6 +212,13 @@ class VoiceRecordViewController: UIViewController {
         recordTableView.delegate = self
         recordTableView.dataSource = self
         recordTableView.register(UINib(nibName: "VoiceRecordTvCell", bundle: nil), forCellReuseIdentifier: "cell")
+        let bottomInset: CGFloat = 80.0
+
+      // Apply the inset to the table view's content.
+             recordTableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: bottomInset, right: 0)
+        // Assuming you have an outlet named 'myTableView'
+        recordTableView.showsVerticalScrollIndicator = false
+        recordTableView.showsHorizontalScrollIndicator = false
     }
     
     public func setupRecordButtonUI() {
@@ -287,65 +290,85 @@ extension VoiceRecordViewController: UITableViewDelegate, UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if nextCell == indexPath.row {
-            return 180
-        }else{
-            return 75
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = recordTableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! VoiceRecordTvCell
-        cell.selectionStyle = .none
-        
-        cell.record = voiceRecords[indexPath.row]
-        cell.trashButton.addTarget(self, action: #selector(deleteVoiceRecord), for: .touchUpInside)
-        cell.optionButton.addTarget(self, action: #selector(optionButtonAction), for: .touchUpInside)
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        previousCell = indexPath.row
-        
-        if previousCell != nextCell { /// when new cell action then this block working.  same cell action ignore this block
-            /// new cell action
-            
-            print("p : \(previousCell) = n: \(nextCell)")
-            timerT?.invalidate()
-            timerT = nil
-            audioPlayer.stop()
-            soundOnOff = false
-            
-            let cell = recordTableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! VoiceRecordTvCell
-            cell.playButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
-            cell.currentDurationLbl.text = "00:00"
-            cell.endingDurationLbl.text = "00:00"
-            
-            cell.slider.value = 0
-            cell.counter = 0.0
-            audioPlayer.currentTime = 0.0
-            
-            if let name = voiceRecords[indexPath.row].name {
-                if  let recordedDirURL = DirectoryManager.shared.voiceRecordDirPath() {
-                    let audioURL = recordedDirURL.appendingPathComponent(name + ".m4a")
-                    
-                    do {
-                        audioPlayer = try AVAudioPlayer(contentsOf: audioURL)
-                    } catch let error as NSError {
-                        print(error.localizedDescription)
-                    } catch {
-                        print("AVAudioPlayer init failed")
-                    }
-                }
+            if indexPath == expandedIndexPath {
+                return 176 // Expanded height
+            } else {
+                return 67  // Collapsed height
             }
         }
-        
-        nextCell = previousCell
-        
-        recordTableView.reloadRows(at: [indexPath], with: .automatic)
-        recordTableView.deselectRow(at: indexPath, animated: true)
-    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+           let cell = recordTableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! VoiceRecordTvCell
+           cell.selectionStyle = .none
+           
+           cell.record = voiceRecords[indexPath.row]
+           cell.trashButton.addTarget(self, action: #selector(deleteVoiceRecord), for: .touchUpInside)
+           
+           // Tag a OptionButton with the row index to identify it later
+           cell.optionButton.tag = indexPath.row
+           cell.optionButton.addTarget(self, action: #selector(optionButtonAction), for: .touchUpInside)
+        if indexPath.row == voiceRecords.count - 1 {
+                // If it's the last cell, hide the separator.
+                cell.seperatorView.isHidden = true
+            } else {
+                // For all other cells, make sure the separator is visible.
+                // This is important because cells are reused.
+                cell.seperatorView.isHidden = false
+            }
+           return cell
+       }
+       
+       func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+           // Immediately deselect the row to prevent it from staying highlighted
+           tableView.deselectRow(at: indexPath, animated: true)
+
+           // Stop any currently playing audio on any tap
+           timerT?.invalidate()
+           timerT = nil
+           if soundOnOff {
+               audioPlayer.stop()
+               soundOnOff = false
+           }
+           
+           let previouslyExpandedIndexPath = expandedIndexPath
+           
+           // Case 1: Tapping an already expanded cell to collapse it.
+           if previouslyExpandedIndexPath == indexPath {
+               expandedIndexPath = nil
+           }
+           // Case 2: Tapping a new or collapsed cell to expand it.
+           else {
+               expandedIndexPath = indexPath
+               
+               // Setup the audio player for the newly selected cell
+               if let name = voiceRecords[indexPath.row].name,
+                  let recordedDirURL = DirectoryManager.shared.voiceRecordDirPath() {
+                   let audioURL = recordedDirURL.appendingPathComponent(name + ".m4a")
+                   do {
+                       audioPlayer = try AVAudioPlayer(contentsOf: audioURL)
+                   } catch {
+                       print("AVAudioPlayer init failed: \(error.localizedDescription)")
+                   }
+               }
+           }
+           
+           // Animate the height changes smoothly for the concerned cells
+           var indexPathsToUpdate: [IndexPath] = []
+           if let previousPath = previouslyExpandedIndexPath {
+               indexPathsToUpdate.append(previousPath)
+           }
+           if let currentPath = expandedIndexPath, currentPath != previouslyExpandedIndexPath {
+               indexPathsToUpdate.append(currentPath)
+           }
+           
+           // Use reloadRows to ensure cell UI is reset correctly upon collapse/expand
+           if !indexPathsToUpdate.isEmpty {
+               tableView.reloadRows(at: indexPathsToUpdate, with: .automatic)
+           } else if let previouslyExpandedIndexPath {
+               // This handles collapsing the last expanded cell
+               tableView.reloadRows(at: [previouslyExpandedIndexPath], with: .automatic)
+           }
+       }
     
     @objc func deleteVoiceRecord(_ sender: UIButton) {
         
@@ -402,97 +425,218 @@ extension VoiceRecordViewController: UITableViewDelegate, UITableViewDataSource 
     }
     
     func showAlert(tag : Int){
-        let actionsheet = UIAlertController(title: voiceRecords[tag].name, message: "", preferredStyle: .actionSheet)
         
-        actionsheet.addAction(UIAlertAction(title: "Share", style: .default , handler: { (UIAlertAction)in
+        // 1. Define which options you want to show. You can include any or all of them.
+        let options: [RecordCellOptionVC.Option] = [.rename, .duplicate, .share]
+
+        // 2. Instantiate the view controller with the options and their corresponding actions.
+        let selectionVC = RecordCellOptionVC.instantiate(
+            options: options,
+            onSelectRename: { [weak self] in
+                print("Rename action triggered.")
+                self?.renameAudio(tag: tag)
+            },
+            onSelectDuplicate: { [weak self] in
+                            print("Duplicate action triggered.")
+                self?.duplicateAudio(tag: tag)
+                        },
             
-            let record = self.voiceRecords[tag]
-            if let name = record.name {
-                
-                if  let recordedDirURL = DirectoryManager.shared.voiceRecordDirPath() {
-                    let activityItem = recordedDirURL.appendingPathComponent(name + ".m4a")
+            onSelectShare: { [weak self] in
+                let record = self?.voiceRecords[tag]
+                if let name = record?.name {
                     
-                    let activityVC = UIActivityViewController(activityItems: [activityItem],applicationActivities: nil)
-                    activityVC.popoverPresentationController?.sourceView = self.view
-                    self.present(activityVC, animated: true, completion: nil)
-                }
-            }
-        }))
-        
-        actionsheet.addAction(UIAlertAction(title: "Rename", style: .default , handler: { (UIAlertAction)in
-            self.renameAudio(tag: tag)
-        }))
-        
-        actionsheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler:{ (UIAlertAction) in
-                print("User click Dismiss button")
-        }))
-        self.present(actionsheet, animated: true)
-    }
-    
-    func renameAudio(tag: Int) {
-        
-        let record = self.voiceRecords[tag]
-        if let name = record.name {
-            
-            let vc = UIAlertController(title: "Rename", message: "Enter Aspected file name", preferredStyle: .alert)
-            vc.addTextField { textField in
-                textField.placeholder = name
-            }
-            vc.addAction(UIAlertAction(title: "Rename", style: .default, handler: { action in
-                let textField = vc.textFields?.first
-                
-                if let newFileName = textField?.text {
-                    
-                    guard let folderPath = DirectoryManager.shared.voiceRecordDirPath() else{return}
-                    let currentAudioURL = URL(fileURLWithPath: folderPath.path.appending("/\(name).m4a"))
-                    
-                    let renameAudioURL = URL(fileURLWithPath: folderPath.path.appending("/\(newFileName).m4a"))
-                    do {
-                        try? FileManager.default.moveItem(at: currentAudioURL, to: renameAudioURL)
+                    if  let recordedDirURL = DirectoryManager.shared.voiceRecordDirPath() {
+                        let activityItem = recordedDirURL.appendingPathComponent(name + ".m4a")
                         
-                        if !newFileName.isEmpty {
-                            self.voiceRecords[tag].name = newFileName
-                            try? self.context.save()
-                        }
-                        
-                        DispatchQueue.main.async {
-                            self.recordTableView.reloadRows(at: [IndexPath(row: tag, section: 0)], with: .automatic)
-                        }
-                    } catch let error {
-                        print("Error renaming file: \(error)")
+                        let activityVC = UIActivityViewController(activityItems: [activityItem],applicationActivities: nil)
+                        activityVC.overrideUserInterfaceStyle = .light
+                        activityVC.popoverPresentationController?.sourceView = self?.view
+                        self?.present(activityVC, animated: true, completion: nil)
                     }
                 }
-            }))
-            vc.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-            self.present(vc, animated: true)
+            }
+        )
+
+        // 3. Present the sheet. This part remains the same.
+        // Note: The grabber visibility is now set inside the VC, so this check is optional.
+        if let sheet = selectionVC.sheetPresentationController {
+            // You can still customize the sheet here if needed.
+            // For example: sheet.largestUndimmedDetentIdentifier = .medium
         }
+
+        self.present(selectionVC, animated: true)
+        
+    }
+    
+    func duplicateAudio(tag: Int) {
+        // 1. Ensure the selected index is valid
+        guard tag < voiceRecords.count else {
+            print("Error: Invalid index for duplication.")
+            return
+        }
+        let originalRecord = voiceRecords[tag]
+        
+        guard let originalName = originalRecord.name,
+              let folderURL = DirectoryManager.shared.voiceRecordDirPath() else {
+            print("Error: Could not find original record name or directory path.")
+            return
+        }
+
+        // 2. Find a unique name for the new (duplicated) file
+        var newName = ""
+        var copyCount = 1
+        let fileManager = FileManager.default
+        
+        while true {
+            let potentialName = (copyCount == 1) ? "\(originalName) (copy)" : "\(originalName) (copy \(copyCount))"
+            let destinationURL = folderURL.appendingPathComponent(potentialName + ".m4a")
+            
+            if !fileManager.fileExists(atPath: destinationURL.path) {
+                newName = potentialName
+                break
+            }
+            copyCount += 1
+        }
+        
+        let sourceURL = folderURL.appendingPathComponent(originalName + ".m4a")
+        let destinationURL = folderURL.appendingPathComponent(newName + ".m4a")
+
+        // 3. Copy the actual audio file
+        do {
+            try fileManager.copyItem(at: sourceURL, to: destinationURL)
+            
+            // 4. If file copy succeeds, create a new entry in Core Data
+            let newRecord = VoiceRecord(context: context)
+            newRecord.name = newName
+            newRecord.duration = originalRecord.duration
+            newRecord.creationDate = Date()
+            
+            try context.save()
+            
+            // 5. Update the UI on the main thread
+            DispatchQueue.main.async {
+                // Adjust the expanded index path before inserting the new row
+                if let oldIndexPath = self.expandedIndexPath {
+                    let newRow = oldIndexPath.row + 1
+                    self.expandedIndexPath = IndexPath(row: newRow, section: oldIndexPath.section)
+                }
+
+                self.voiceRecords.insert(newRecord, at: 0)
+                self.recordTableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+                
+                // --- New Line Added Here ---
+                // Scroll to the top to show the newly added duplicate
+                let topIndexPath = IndexPath(row: 0, section: 0)
+                self.recordTableView.scrollToRow(at: topIndexPath, at: .top, animated: true)
+                // --- End of New Line ---
+                
+                self.checkEmpty()
+            }
+            
+        } catch {
+            print("Error duplicating audio file: \(error.localizedDescription)")
+        }
+    }
+    func renameAudio(tag: Int) {
+        let record = self.voiceRecords[tag]
+        guard let name = record.name else { return }
+        
+        let vc = UIAlertController(title: "Rename", message: "Enter a new name for your recording.", preferredStyle: .alert)
+        
+        vc.addTextField { textField in
+            textField.text = name
+            textField.clearButtonMode = .whileEditing
+        }
+        
+        let renameAction = UIAlertAction(title: "Rename", style: .default, handler: { [weak self] _ in
+            guard let self = self,
+                  let textField = vc.textFields?.first,
+                  let newFileName = textField.text?.trimmingCharacters(in: .whitespacesAndNewlines), // Trim whitespace
+                  !newFileName.isEmpty else {
+                return
+            }
+            
+            // Don't do anything if the name hasn't changed
+            if newFileName == name {
+                return
+            }
+            
+            guard let folderPath = DirectoryManager.shared.voiceRecordDirPath() else { return }
+            let newAudioURL = folderPath.appendingPathComponent(newFileName + ".m4a")
+            
+            // --- KEY CHANGE: Check if a file with the new name already exists ---
+            if FileManager.default.fileExists(atPath: newAudioURL.path) {
+                // If it exists, show the error alert and stop.
+                self.showErrorAlert(message: "A recording with the name \"\(newFileName)\" already exists. Please choose a different name.")
+                return
+            }
+            
+            // If the name is unique, proceed with renaming.
+            let currentAudioURL = folderPath.appendingPathComponent(name + ".m4a")
+            
+            do {
+                try FileManager.default.moveItem(at: currentAudioURL, to: newAudioURL)
+                
+                // Update Core Data
+                self.voiceRecords[tag].name = newFileName
+                try self.context.save()
+                
+                // Update the UI
+                DispatchQueue.main.async {
+                    self.recordTableView.reloadRows(at: [IndexPath(row: tag, section: 0)], with: .automatic)
+                }
+                
+            } catch {
+                // Catch any other potential file system errors
+                print("Error renaming file: \(error)")
+                self.showErrorAlert(message: "An unexpected error occurred. Please try again.")
+            }
+        })
+        
+        vc.addAction(renameAction)
+        vc.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        
+        vc.overrideUserInterfaceStyle = .light
+        self.present(vc, animated: true)
+    }
+    
+    // This function can be placed anywhere inside the VoiceRecordViewController class
+    func showErrorAlert(title: String = "Unable to Rename", message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        alert.overrideUserInterfaceStyle = .light // To keep the white background
+        self.present(alert, animated: true)
     }
 }
 
 extension VoiceRecordViewController: RecordButtonNewDelegate {
     func didStartRecording() {
+        // 1. Reset the live waveform display
         self.liveAudioSamples.removeAll()
-          waveformView.audioSamples = []
+        waveformView?.audioSamples = []
+
+        // 2. Animate the waveform view to make it visible
         UIView.animate(withDuration: 0.3) {
             self.cnstWaveformViewBottom.constant = 0
             self.view.layoutIfNeeded()
         }
         
-        if let previousCell = previousCell {
-            self.nextCell = nil
-            recordTableView.reloadRows(at: [IndexPath(row: previousCell, section: 0)], with: .automatic)
-            self.previousCell = nil
+        // 3. Collapse any previously expanded cell using the new logic
+        if let indexPathToCollapse = expandedIndexPath {
+            expandedIndexPath = nil
+            recordTableView.reloadRows(at: [indexPathToCollapse], with: .automatic)
         }
-                
+        
+        // 4. Stop any audio that is currently playing
         if soundOnOff {
             audioPlayer.stop()
             timerT?.invalidate()
             timerT = nil
             soundOnOff = false
-            self.startVoiceRecord()
-        }else{
-            self.startVoiceRecord()
         }
+        
+        // 5. Start the new voice recording
+        self.startVoiceRecord()
     }
     
     func didStopRecording() {
