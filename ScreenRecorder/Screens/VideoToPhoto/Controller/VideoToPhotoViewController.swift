@@ -23,16 +23,9 @@ class VideoToPhotoViewController: UIViewController {
             self.lblTitle.textColor = UIColor(hex: "#151517")
         }
     }
-    
-    @IBOutlet weak var lblTimeDuration: UILabel!{
-        didSet{
-            self.lblTimeDuration.font = .appFont_CircularStd(type: .medium, size: 14)
-        }
-    }
-
-    
-    //var playerView: PlayerView?
-    //NEW VIDEO VIEW
+ 
+    @IBOutlet weak var navView: UIView!
+    @IBOutlet weak var cnstNavViewHeight: NSLayoutConstraint!
     private var videoView: VideoView = {
         let videoView = VideoView(frame: CGRect(x: 0, y: 0, width: 100, height: 100), viewType: .default)
         //videoView.translatesAutoresizingMaskIntoConstraints = false
@@ -41,12 +34,22 @@ class VideoToPhotoViewController: UIViewController {
     @IBOutlet weak var playerContainerView: UIView!
     @IBOutlet weak var videoCropView: VideoCropView!
     @IBOutlet weak var selectThumbView: ThumbSelectorView!
-    @IBOutlet weak var frameTimeLabel: UILabel!
+    @IBOutlet weak var lblFrameTime: PaddedLabel!{
+        didSet {
+            // Set the text color to white
+            lblFrameTime.font = .appFont_CircularStd(type: .book, size: 12)
+            lblFrameTime.textColor = .white
+            lblFrameTime.backgroundColor = UIColor(named: "newBrandColor")
+            lblFrameTime.layer.cornerRadius = 11
+            lblFrameTime.layer.masksToBounds = true
+            
+        }
+    }
 
     var video: Video?
     var playerStatus: PlayerStatus = .stop
     var isPlay = false
-        
+    var isVCLoaded: Bool = false
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -81,6 +84,25 @@ class VideoToPhotoViewController: UIViewController {
         super.viewDidDisappear(animated)
         controlVideo()
         self.videoView.invalidate()
+    }
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        if !isVCLoaded{
+            isVCLoaded = true
+            setupNavHeight()
+        }
+    }
+    
+    private func setupNavHeight(){
+        let uiType = getDeviceUIType()
+        switch uiType {
+        case .dynamicIsland:
+            self.cnstNavViewHeight.constant = NavbarHeight.withDynamicIsland.rawValue
+        case .notch:
+            self.cnstNavViewHeight.constant = NavbarHeight.withNotch.rawValue
+        case .noNotch:
+            self.cnstNavViewHeight.constant = NavbarHeight.withOutNotch.rawValue
+        }
     }
     
     private func loadVideo() {
@@ -193,7 +215,7 @@ extension VideoToPhotoViewController: ThumbSelectorViewDelegate {
         print("current time - \(imageTime.seconds)")
         
         videoCropView.player?.seek(to: imageTime, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero)
-        frameTimeLabel.text = imageTime.toHourMinuteSecond()
+        lblFrameTime.text = imageTime.toHourMinuteSecond()
         self.videoView.player?.seek(to: imageTime, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero)
         
     }

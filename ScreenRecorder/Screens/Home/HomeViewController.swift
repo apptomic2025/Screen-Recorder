@@ -259,104 +259,18 @@ extension HomeViewController{
         // configuration.filter = .any(of: [.videos])
         // Set the mode to avoid transcoding, if possible, if your app supports arbitrary image/video encodings.
         configuration.preferredAssetRepresentationMode = .current
-        // Set the selection behavior to respect the user’s selection order.
-        //configuration.selection = .ordered
-        // Set the selection limit to enable multiselection.
+        
         if type != nil {
             configuration.selectionLimit = 90
         }else{
             configuration.selectionLimit = 1
         }
-        // configuration.selectionLimit = 1
-        // Set the preselected asset identifiers with the identifiers that the app tracks.
-        //configuration.preselectedAssetIdentifiers = selectedAssetIdentifiers
         
         let picker = PHPickerViewController(configuration: configuration)
         picker.overrideUserInterfaceStyle = .light
         picker.delegate = self
         picker.modalPresentationStyle = .fullScreen
         present(picker, animated: true)
-    }
-    func presentPHpicker(selectToolType: SelectToolType){
-        var titleText = ""
-        var messageText = ""
-        if selectToolType == .gif {
-            titleText = "Video to GIF"
-        }else if selectToolType == .edit {
-            titleText = "Video Edit"
-        }else if selectToolType == .voiceReocrd {
-            titleText = "Voice Recorder"
-        }else if selectToolType == .videoToPhoto {
-            titleText = "Video to Photo"
-        }else if selectToolType == .videoToAudio {
-            titleText = "Video to Audio"
-        }else if selectToolType == .trim {
-            titleText = "Video Trimmer"
-        }else if selectToolType == .compress {
-            titleText = "Video Compress"
-        }else if selectToolType == .photoToVideo {
-            titleText = "Photo to Video"
-        }else if selectToolType == .speed {
-            titleText = "Video Speed"
-        }else if selectToolType == .crop {
-            titleText = "Crop Video"
-        }
-        
-        let actionsheet = UIAlertController(title: titleText, message: "Select a video source from previous Recordings, Gallery", preferredStyle: .actionSheet)
-        actionsheet.overrideUserInterfaceStyle = .light
-        actionsheet.addAction(UIAlertAction(title: "Gallery", style: .default , handler:{ (UIAlertAction)in
-            self.presentPicker()
-        }))
-            
-        actionsheet.addAction(UIAlertAction(title: "Recordings", style: .default , handler:{ (UIAlertAction)in
-            if let vc = loadVCfromStoryBoard(name: "MyRecord", identifier: "MyRecordVC") as? MyRecordVC{
-                
-                if selectToolType  == .faceCam {
-                    vc.selectToolType = .faceCam
-                    
-                }else if selectToolType == .commentary{
-                    vc.selectToolType = .commentary
-                    
-                }else if selectToolType == .gif {
-                    vc.selectToolType = .gif
-
-                }else if selectToolType == .edit {
-                    vc.selectToolType = .edit
-
-                }else if selectToolType == .voiceReocrd {
-                    vc.selectToolType = .voiceReocrd
-
-                }else if selectToolType == .videoToPhoto {
-                    vc.selectToolType = .videoToPhoto
-
-                }else if selectToolType == .videoToAudio {
-                    vc.selectToolType = .videoToPhoto
-
-                }else if selectToolType == .trim {
-                    vc.selectToolType = .trim
-                    
-                }else if selectToolType == .compress {
-                    vc.selectToolType = .compress
-
-                }else if selectToolType == .photoToVideo {
-                    vc.selectToolType = .photoToVideo
-
-                }else if selectToolType == .speed {
-                    vc.selectToolType = .speed
-
-                }else if selectToolType == .crop {
-                    vc.selectToolType = .crop
-                }
-                DispatchQueue.main.async {
-                    self.navigationController?.pushViewController(vc, animated: true)
-                }
-            }
-        }))
-        
-        actionsheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler:{ (UIAlertAction)in
-                print("User click Dismiss button")
-        }))
-        self.present(actionsheet, animated: true)
     }
 
     
@@ -894,7 +808,6 @@ private extension HomeViewController {
                 case .voiceReocrd:
                     break
                 case .photoToVideo:
-                    
                     break
                 case .videoToPhoto:
                     self.goToVideoToPhotoVC(videoUrl: url)
